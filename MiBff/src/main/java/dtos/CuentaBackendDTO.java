@@ -1,9 +1,8 @@
-package main.java.dtos;
-
+package dtos;
 
 import java.math.BigDecimal;
 
-public record CuentaDTO(
+public record CuentaBackendDTO(
         Long cuentaId,
         String nombre,
         BigDecimal saldo,
