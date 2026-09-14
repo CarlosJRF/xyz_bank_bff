@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import services.AgregadorService;
 import dtos.CuentaAgregadaDTO;
+import dtos.TransaccionBackendDTO;
 import movil.dtos.*;
 import lombok.RequiredArgsConstructor;
 
@@ -14,9 +15,10 @@ public class BffMovilService {
 
     public CuentaMovilDetalleDTO obtenerDetalleMovil(Long cuentaId) {
         CuentaAgregadaDTO agregado = agregador.agregarDetalle(cuentaId);
-        
-        // Recorta el payload a los últimos 5 movimientos y elimina metadatos pesados
-        List ultimos = agregado.transacciones().stream()
+
+        List<TransaccionBackendDTO> txs = agregado.transacciones();
+
+        List<MovimientoMovilDTO> ultimos = txs.stream()
             .limit(5)
             .map(t -> new MovimientoMovilDTO(t.fecha(), t.monto()))
             .toList();
