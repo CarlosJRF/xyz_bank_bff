@@ -2,9 +2,9 @@ package main.java.controller;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
-import cl.xyzbank.transacciones.repositories.TransaccionRepository;
-import cl.xyzbank.transacciones.dtos.TransaccionDTO;
-import cl.xyzbank.transacciones.entities.TransaccionEntity;
+import main.java.repositories.TransaccionRepository;
+import main.java.dtos.TransaccionDTO;
+import main.java.entities.TransaccionEntity;
 import lombok.RequiredArgsConstructor;
 
 @RestController

@@ -20,7 +20,7 @@ public class AgregadorService {
     private final TransaccionesClient transaccionesClient;
     private final ExecutorService backendExecutor;
 
-    public List listarCuentas() {
+    public List<CuentaBackendDTO> listarCuentas() {
         return cuentasClient.listarCuentas();
     }
 
