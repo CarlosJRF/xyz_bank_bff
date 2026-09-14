@@ -15,7 +15,7 @@ public class CuentasClient {
         this.restClient = restClient;
     }
 
-    public List listarCuentas() {
+    public List<CuentaBackendDTO> listarCuentas() {
         return restClient.get()
                 .uri("/cuentas")
                 .retrieve()

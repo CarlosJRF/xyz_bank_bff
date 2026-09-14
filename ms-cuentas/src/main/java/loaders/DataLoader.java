@@ -8,8 +8,8 @@ import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import cl.xyzbank.cuentas.entities.CuentaEntity;
-import cl.xyzbank.cuentas.repositories.CuentaRepository;
+import main.java.entities.CuentaEntity;
+import main.java.repositories.CuentaRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component

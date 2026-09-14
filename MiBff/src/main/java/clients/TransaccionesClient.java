@@ -15,7 +15,7 @@ public class TransaccionesClient {
         this.restClient = restClient;
     }
 
-    public List listarPorCuenta(Long cuentaId) {
+    public List<TransaccionBackendDTO> listarPorCuenta(Long cuentaId) {
         return restClient.get()
                 .uri("/transacciones/cuenta/{id}", cuentaId)
                 .retrieve()

@@ -8,8 +8,8 @@ import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import cl.xyzbank.transacciones.entities.TransaccionEntity;
-import cl.xyzbank.transacciones.repositories.TransaccionRepository;
+import main.java.entities.TransaccionEntity;
+import main.java.repositories.TransaccionRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
