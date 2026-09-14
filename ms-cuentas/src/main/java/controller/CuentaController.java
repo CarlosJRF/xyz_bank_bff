@@ -1,4 +1,4 @@
-package main.java.controller;
+package src.main.java.controller;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
