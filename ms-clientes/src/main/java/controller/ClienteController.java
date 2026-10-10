@@ -23,6 +23,11 @@ public class ClienteController {
             .toList();
     }
 
+    @GetMapping("/buscar")
+    public ResponseEntity<ClienteDTO> buscarPorNombre(@RequestParam String nombre) {
+        return ResponseEntity.of(repository.findFirstByNombreIgnoreCase(nombre).map(this::toDTO));
+    }
+
     @GetMapping("/{clienteId}")
     public ClienteDTO obtenerCliente(@PathVariable Long clienteId) {
         return repository.findById(clienteId)

@@ -23,6 +23,8 @@ public class BffMovilService {
             .map(t -> new MovimientoMovilDTO(t.fecha(), t.monto()))
             .toList();
 
-        return new CuentaMovilDetalleDTO(agregado.cuenta().cuentaId(), agregado.cuenta().saldo(), ultimos);
+        String titular = agregado.cliente() == null ? null : agregado.cliente().nombre();
+
+        return new CuentaMovilDetalleDTO(agregado.cuenta().cuentaId(), titular, agregado.cuenta().saldo(), ultimos);
     }
 }

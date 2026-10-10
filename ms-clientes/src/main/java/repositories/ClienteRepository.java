@@ -6,4 +6,6 @@ import main.java.entities.ClienteEntity;
 
 public interface ClienteRepository extends JpaRepository<ClienteEntity, Long> {
     Optional<ClienteEntity> findByRut(String rut);
+
+    Optional<ClienteEntity> findFirstByNombreIgnoreCase(String nombre);
 }
