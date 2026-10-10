@@ -1,0 +1,11 @@
+rut,nombre,email,telefono,direccion,fecha_nacimiento
+12.345.678-9,Alice Brown,alice.brown@xyzbank.cl,+56912345678,Av. Providencia 1234 Santiago,1985-03-14
+13.456.789-0,Bob Johnson,bob.johnson@xyzbank.cl,+56923456789,Calle Los Alerces 456 Concepcion,1978-07-22
+14.567.890-1,Charlie Green,charlie.green@xyzbank.cl,+56934567890,Pasaje Las Rosas 789 Valparaiso,1990-11-02
+15.678.901-2,Diana Prince,diana.prince@xyzbank.cl,+56945678901,Av. Libertador 321 Santiago,1982-01-30
+16.789.012-3,Jane Smith,jane.smith@xyzbank.cl,+56956789012,Calle OHiggins 654 La Serena,1995-06-18
+17.890.123-4,John Doe,john.doe@xyzbank.cl,+56967890123,Av. Brasil 987 Vina del Mar,1975-09-09
+18.901.234-5,Steve Rogers,steve.rogers@xyzbank.cl,+56978901234,Calle Independencia 159 Temuco,1988-12-25
+19.012.345-6,Maria Gonzalez,maria.gonzalez@xyzbank.cl,+56989012345,Pasaje Las Dalias 753 Antofagasta,1992-04-11
+20.123.456-7,Pedro Fernandez,pedro.fernandez@xyzbank.cl,+56990123456,Av. Colon 258 Punta Arenas,1980-02-27
+21.234.567-8,Lucia Martinez,lucia.martinez@xyzbank.cl,+56901234567,Calle San Martin 147 Rancagua,1998-08-05
