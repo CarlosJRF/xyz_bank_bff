@@ -1,0 +1,39 @@
+flowchart LR
+    classDef ext fill:#e6f0ff,stroke:#2f5fa7,color:#102a56
+    classDef svc fill:#eefaf0,stroke:#2f855a,color:#14452f
+    classDef infra fill:#fff7e0,stroke:#b7791f,color:#5f370e
+    classDef data fill:#f3e8ff,stroke:#6b46c1,color:#322659
+
+    U["Tu equipo<br/>Postman · SSH"]:::ext
+
+    subgraph EC2["AWS EC2 · t3.xlarge (4 vCPU / 16 GiB) · Amazon Linux 2023 · gp3 30 GiB · Elastic IP"]
+        subgraph SG["Security Group — entrada: 22, 80, 8443 (solo Mi IP)"]
+            subgraph D2["Docker · xyz_bank_bff"]
+                BFF["MiBff :8443"]:::svc
+                MSC["ms-cuentas :8081"]:::svc
+                MST["ms-transacciones :8094"]:::svc
+                MSL["ms-clientes :8082"]:::svc
+            end
+            subgraph D1["Docker Compose · kafka_S8 (red backend)"]
+                GW["api-gateway :80"]:::infra
+                INT["auth · config · discovery<br/>ingestion · processor · resilient-client"]:::svc
+                K[("Kafka")]:::data
+                PG1[("PostgreSQL banking")]:::data
+            end
+            subgraph D3["Docker · xyz_bank_batch"]
+                JOB["masterJob<br/>(job puntual)"]:::svc
+                PG2[("PostgreSQL xyzbank")]:::data
+            end
+        end
+    end
+
+    U -- "22 SSH" --> EC2
+    U -- "8443 HTTPS" --> BFF
+    U -- "80 HTTP" --> GW
+    BFF --> MSC
+    BFF --> MST
+    BFF --> MSL
+    GW --> INT
+    INT --> K
+    INT --> PG1
+    JOB --> PG2
