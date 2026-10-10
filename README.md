@@ -125,4 +125,8 @@ docker compose down
 
 Solo el BFF se publica (`BFF_PORT`, por defecto 8443). Los tres microservicios no tienen autenticación propia, por eso viven únicamente en la red interna `backend`; el BFF los alcanza por nombre de servicio (`MS_CUENTAS_BASE_URL`, `MS_TRANSACCIONES_BASE_URL` y `MS_CLIENTES_BASE_URL` reemplazan las URL `localhost` de `application.properties`). El certificado del BFF es autofirmado: usa `-k` en curl o desactiva la verificación SSL en Postman.
 
+## ☁️ Despliegue en AWS EC2
+
+`deploy/ec2-setup.sh` prepara una instancia Amazon Linux 2023 y levanta los tres sistemas de la solución (`kafka_S8`, `xyz_bank_bff` y `xyz_bank_batch`), con pruebas de humo al final. Instancia, Security Group y pasos completos en [`entrega/despliegue.md`](entrega/despliegue.md).
+
 ---
