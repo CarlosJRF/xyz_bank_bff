@@ -91,7 +91,7 @@ datasets de origen. La integración entre ellos queda planteada como evolución 
 | OAuth2 para proteger endpoints | `kafka_S8`: `auth-server` (Client Credentials, scopes `data.read` e `ingestion.write`) |
 | Resilience4j y comportamiento alternativo | `kafka_S8`: `resilient-client`; `docs/evidencia/circuit-breaker.txt` |
 | Tópicos, productores y consumidores | `kafka_S8`: `docs/evidencia/kafka-topics.txt` y `demo-end-to-end.txt` |
-| Docker Compose y preparación para AWS | `kafka_S8`: `docker-compose.yaml` y `deploy/ec2-setup.sh`; ver `despliegue.md` |
+| Docker Compose y preparación para AWS | `docker-compose.yaml` en los tres repositorios y `kafka_S8/deploy/ec2-setup.sh`; ver `despliegue.md` |
 
 ## 5. Del legacy a la nueva arquitectura
 
@@ -124,7 +124,7 @@ salvo las cifras de los propios repositorios.
 2. **Pagos y eventos.** Agregar a `ms-transacciones` el registro de pagos, transferencias y depósitos, publicando el evento "transacción completada" en Kafka para que lo consuma la plataforma.
 3. **Vínculo cuenta–cliente.** `ms-cuentas` no guarda un `clienteId`: hoy el BFF resuelve al titular por nombre. Agregar la clave del cliente a la cuenta.
 4. **Descubrimiento y configuración.** Registrar los microservicios de `xyz_bank_bff` en Eureka y leer su configuración del Config Server, en vez de URLs fijas.
-5. **Contenedores.** `xyz_bank_bff` y `xyz_bank_batch` se ejecutan hoy con Maven o JAR; falta su Dockerfile y un Compose para desplegar los tres sistemas juntos (`kafka_S8` ya está contenerizado).
+5. **Despliegue unificado.** Los tres repositorios tienen su Dockerfile y su Compose y pueden convivir en una misma instancia (no comparten puertos publicados), pero cada uno se levanta con su propio `docker compose`; falta un script que los arranque en orden.
 6. **Un solo pipeline de datos.** Batch e ingesta Kafka procesan los mismos tipos de archivo con reglas distintas; unificar criterios de validación y destino.
 
 ## 8. Contenido de la entrega
