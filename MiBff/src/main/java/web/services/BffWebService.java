@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import services.AgregadorService;
+import dtos.ClienteBackendDTO;
 import dtos.CuentaAgregadaDTO;
 import dtos.TransaccionBackendDTO;
 import web.dtos.*;
@@ -36,6 +37,10 @@ public class BffWebService {
         BigDecimal neto = ingresos.add(egresos);
         ResumenMovimientosDTO resumen = new ResumenMovimientosDTO(ingresos, egresos, neto, movimientos.size());
 
-        return new CuentaWebDetalleDTO(agregado.cuenta().cuentaId(), agregado.cuenta().nombre(), agregado.cuenta().saldo(), agregado.cuenta().edad(), agregado.cuenta().tipo(), movimientos, resumen);
+        ClienteBackendDTO c = agregado.cliente();
+        ClienteWebDTO cliente = c == null ? null
+            : new ClienteWebDTO(c.rut(), c.nombre(), c.email(), c.telefono(), c.direccion(), c.fechaNacimiento());
+
+        return new CuentaWebDetalleDTO(agregado.cuenta().cuentaId(), agregado.cuenta().nombre(), agregado.cuenta().saldo(), agregado.cuenta().edad(), agregado.cuenta().tipo(), cliente, movimientos, resumen);
     }
 }

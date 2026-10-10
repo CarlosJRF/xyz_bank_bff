@@ -1,0 +1,63 @@
+flowchart TB
+    classDef canal fill:#e6f0ff,stroke:#2f5fa7,color:#102a56
+    classDef svc fill:#eefaf0,stroke:#2f855a,color:#14452f
+    classDef infra fill:#fff7e0,stroke:#b7791f,color:#5f370e
+    classDef data fill:#f3e8ff,stroke:#6b46c1,color:#322659
+    classDef legacy fill:#f5f5f5,stroke:#718096,color:#2d3748,stroke-dasharray:4 3
+
+    LEG["Sistema legacy<br/>COBOL + scripts Shell<br/>(mainframe)"]:::legacy
+    CSV[("Datasets CSV<br/>fin_legacy_data<br/>(simulan la salida del legacy)")]:::data
+    LEG -. "origen de los datos" .-> CSV
+
+    subgraph CAN["Canales de cliente"]
+        direction LR
+        WEB["Web"]:::canal
+        MOV["App móvil"]:::canal
+        ATM["Cajero automático"]:::canal
+    end
+    EXT["Cliente HTTP<br/>(Postman / servicios)"]:::canal
+
+    subgraph R1["Repo xyz_bank_bff · Patrón BFF + microservicios de dominio"]
+        BFF["MiBff (BFF unificado)<br/>HTTPS :8443<br/>/api/web · /api/movil · /api/cajero<br/>Basic Auth por rol"]:::svc
+        MSC["ms-cuentas<br/>:8081 · H2"]:::svc
+        MST["ms-transacciones<br/>:8094 · H2"]:::svc
+        MSL["ms-clientes (CRUD)<br/>:8082 · H2"]:::svc
+        BFF -- "REST en paralelo" --> MSC
+        BFF -- "REST en paralelo" --> MST
+        BFF -- "REST · degrada a null si falla" --> MSL
+    end
+
+    subgraph R2["Repo kafka_S8 · Plataforma Spring Cloud + mensajería"]
+        GW["api-gateway<br/>:80 en EC2 · valida JWT"]:::infra
+        subgraph REG["Microservicios registrados"]
+            AS["auth-server<br/>OAuth2 :9000"]:::infra
+            ING["data-ingestion-service"]:::svc
+            PRO["data-processor-service"]:::svc
+            RC["resilient-client<br/>Resilience4j"]:::svc
+        end
+        CS["config-server :8888<br/>Spring Cloud Config"]:::infra
+        DS["discovery-server :8761<br/>Eureka"]:::infra
+        K[("Apache Kafka (KRaft)<br/>*-validated · ingestion-rejected · DLT")]:::data
+        PG1[("PostgreSQL 16<br/>banking")]:::data
+        GW -- "/oauth2/token" --> AS
+        GW -- "lb:// /api/ingestion" --> ING
+        GW -- "lb:// /api/accounts · stats" --> PRO
+        GW -- "lb:// /api/client" --> RC
+        RC -- "JWT propio" --> PRO
+        ING -- "produce" --> K
+        K -- "consume" --> PRO
+        PRO --> PG1
+        CS -. "configuración" .-> REG
+        DS -. "registro" .-> REG
+    end
+
+    subgraph R3["Repo xyz_bank_batch · Migración de procesos batch"]
+        JOB["masterJob (Spring Batch 6)<br/>3 flujos paralelos:<br/>transacciones · intereses · estados anuales"]:::svc
+        PG2[("PostgreSQL<br/>xyzbank")]:::data
+        JOB --> PG2
+    end
+
+    CAN -- "HTTPS" --> BFF
+    EXT -- "Bearer JWT" --> GW
+    CSV --> ING
+    CSV --> JOB

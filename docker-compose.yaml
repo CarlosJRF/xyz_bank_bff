@@ -1,0 +1,53 @@
+# Backend for Frontend (MiBff) and the domain microservices (cuentas, transacciones, clientes).
+#
+#   cp .env.example .env        # optional
+#   docker compose up -d --build --wait
+#
+# Only the BFF is published (BFF_PORT, default 8443, HTTPS). The three microservices have
+# no authentication of their own, so they live only on the internal "backend" network.
+
+name: xyz-bank-bff
+
+x-service: &service
+  restart: unless-stopped
+  mem_limit: ${SERVICE_MEM_LIMIT:-512m}
+  networks: [backend]
+  environment: &service-env
+    JAVA_OPTS: -XX:MaxRAMPercentage=75 -XX:+ExitOnOutOfMemoryError
+
+services:
+
+  ms-cuentas:
+    <<: *service
+    build: ./ms-cuentas
+    image: xyz-bank-bff/ms-cuentas
+
+  ms-transacciones:
+    <<: *service
+    build: ./ms-transacciones
+    image: xyz-bank-bff/ms-transacciones
+
+  ms-clientes:
+    <<: *service
+    build: ./ms-clientes
+    image: xyz-bank-bff/ms-clientes
+
+  mibff:
+    <<: *service
+    build: ./MiBff
+    image: xyz-bank-bff/mibff
+    ports:
+      - "${BFF_PORT:-8443}:8443"
+    environment:
+      <<: *service-env
+      # Override the localhost URLs of application.properties with the Compose service names.
+      MS_CUENTAS_BASE_URL: http://ms-cuentas:8081
+      MS_TRANSACCIONES_BASE_URL: http://ms-transacciones:8094
+      MS_CLIENTES_BASE_URL: http://ms-clientes:8082
+    depends_on:
+      ms-cuentas: { condition: service_healthy }
+      ms-transacciones: { condition: service_healthy }
+      ms-clientes: { condition: service_healthy }
+
+networks:
+  backend:

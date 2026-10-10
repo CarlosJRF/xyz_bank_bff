@@ -38,6 +38,13 @@ public class BackendConfig {
     }
 
     @Bean
+    @Qualifier("clientesRestClient")
+    public RestClient clientesRestClient(@Value("${ms-clientes.base-url}") String baseUrl,
+                                         ClientHttpRequestFactory factory) {
+        return RestClient.builder().baseUrl(baseUrl).requestFactory(factory).build();
+    }
+
+    @Bean
     public ExecutorService backendExecutor() {
         return Executors.newFixedThreadPool(10); // Pool para llamadas concurrentes
     }
