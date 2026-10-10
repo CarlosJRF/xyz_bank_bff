@@ -1,0 +1,28 @@
+sequenceDiagram
+    actor W as Cliente web
+    participant B as MiBff
+    participant A as AgregadorService
+    participant C as ms-cuentas
+    participant T as ms-transacciones
+    participant L as ms-clientes
+
+    W->>B: GET /api/web/cuentas/101 (Basic clienteWeb)
+    B->>B: Autentica y exige el rol WEB
+    B->>A: agregarDetalle(101)
+    par Cuenta y titular
+        A->>C: GET /cuentas/101
+        C-->>A: cuenta (titular, saldo, tipo)
+        A->>L: GET /clientes/buscar?nombre=titular
+        alt Titular encontrado
+            L-->>A: 200 perfil del cliente
+        else No existe o ms-clientes falla
+            L-->>A: 404 o error
+            A->>A: registra advertencia, cliente = null
+        end
+    and Transacciones
+        A->>T: GET /transacciones/cuenta/101
+        T-->>A: lista de transacciones
+    end
+    A-->>B: cuenta + transacciones + cliente
+    B->>B: Arma el detalle web (movimientos y resumen)
+    B-->>W: 200 JSON

@@ -1,0 +1,41 @@
+flowchart TB
+    classDef step fill:#eefaf0,stroke:#2f855a,color:#14452f
+    classDef data fill:#f3e8ff,stroke:#6b46c1,color:#322659
+
+    MJ["masterJob · RunIdIncrementer (re-ejecutable)"]:::step
+    RS["resetTablesStep · TRUNCATE de las tablas destino"]:::step
+    SP{{"split · flowTaskExecutor (3 hilos, uno por flujo)"}}:::step
+
+    subgraph F1["transactionFlow · transactionJob"]
+        direction TB
+        CSV1[("movimientos_financieros_diarios.csv")]:::data
+        R1["Lector sincronizado<br/>(fila como texto crudo)"]:::step
+        P1["TransactionProcessor<br/>valida y normaliza"]:::step
+        W1["JdbcBatchItemWriter<br/>chunk = 100"]:::step
+        T1[("transaction_report")]:::data
+        CSV1 --> R1 --> P1 --> W1 --> T1
+    end
+    subgraph F2["interestFlow · interestJob"]
+        direction TB
+        CSV2[("intereses_trimestrales.csv")]:::data
+        R2["Lector sincronizado<br/>(fila como texto crudo)"]:::step
+        P2["InterestProcessor<br/>valida y calcula el interés"]:::step
+        W2["JdbcBatchItemWriter<br/>chunk = 100"]:::step
+        T2[("account")]:::data
+        CSV2 --> R2 --> P2 --> W2 --> T2
+    end
+    subgraph F3["statementFlow · statementJob"]
+        direction TB
+        CSV3[("estados_financieros_anuales.csv")]:::data
+        R3["Lector sincronizado<br/>(fila como texto crudo)"]:::step
+        P3["StatementProcessor<br/>valida y normaliza"]:::step
+        W3["JdbcBatchItemWriter<br/>chunk = 100"]:::step
+        T3[("annual_statement")]:::data
+        CSV3 --> R3 --> P3 --> W3 --> T3
+    end
+
+
+    MJ --> RS --> SP
+    SP --> F1
+    SP --> F2
+    SP --> F3

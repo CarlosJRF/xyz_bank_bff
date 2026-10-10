@@ -674,7 +674,7 @@ cd /opt/xyz-bank/kafka_S8
 docker compose up -d --scale data-processor-service=2 --no-recreate --wait
 ```
 
-En Eureka (comando de K13 o el panel) aparecen **2 instancias** de `DATA-PROCESSOR-SERVICE` en estado `UP`, y el gateway reparte las peticiones entre ellas. Para volver a una sola:
+En Eureka (comando de K13 o el panel) aparecen **2 instancias** de `DATA-PROCESSOR-SERVICE` en estado `UP`, y el gateway puede repartir las peticiones entre ellas mediante `lb://`. Para volver a una sola:
 
 ```bash
 docker compose up -d --scale data-processor-service=1 --no-recreate --wait
