@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Informe técnico — Modernización del sistema legacy del Banco XYZ</title>
+<meta name="author" content="Carlos Rodriguez — Desarrollo Backend III">
+<style>
+  /* Formato de la plantilla PBY2203_EFT_Plantilla_Informe_PDF (Duoc UC): carta, Arial 12, texto #404040,
+     interlineado 1,5, títulos 22/16/12 pt en negrita, tablas con encabezado gris F0F0F0, acento amarillo FFB800. */
+  :root { --ink: #404040; --grey: #F0F0F0; --line: #D9D9D9; --yellow: #FFB800; --link: #0563C1; }
+  @page {
+    size: letter;
+    margin: 25.4mm 19.05mm 25.4mm 19.05mm;
+    @top-right { content: ""; background: url("img/logo-encabezado.png") no-repeat right 0 top 2.3mm / 57.4mm 15.6mm; }
+    @bottom-right {
+      content: counter(page);
+      background: url("img/logo-pie.png") no-repeat right 9.3mm bottom 8mm / 22.4mm 8mm, url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMTE5NS43MDUgMjk4LjkyMyIgd2lkdGg9IjExOTUuNzA1IiBoZWlnaHQ9IjI5OC45MjMiPjxyZWN0IHg9IjkuNTI1IiB5PSI5LjUyNSIgd2lkdGg9IjExNzYuNjU1IiBoZWlnaHQ9IjI2MC4zNSIgcng9IjEzMC4xNzUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0Q5RDlEOSIgc3Ryb2tlLXdpZHRoPSIxOS4wNSIvPjxpbWFnZSB4PSI1My4xNjMiIHk9IjEwLjYzMyIgd2lkdGg9IjgwNi40NSIgaGVpZ2h0PSIyODguMjkiIHhsaW5rOmhyZWY9ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBUklBQUFCaUNBWUFBQUNjWWx4V0FBQUFDWEJJV1hNQUFCY1JBQUFYRVFIS0p2TS9BQUFRNEVsRVFWUjRuR0w4Ly84L3d5Z1lCYU5nRkpBTkdCZ1lBQUFBQVAvL1lob052VkV3Q2tZQlJZQ0JnUUVBQUFELy94b3RTRWJCS0JnRmxBRUdCZ1lBQUFBQS8vOGFMVWhHd1NnWUJaUUJCZ1lHQUFBQUFQLy9HaTFJUnNFb0dBV1VBUVlHQmdBQUFBRC8veG90U0ViQktCZ0ZsQUVHQmdZQUFBQUEvLzhhTFVoR3dTZ1lCWlFCQmdZR0FBQUFBUC8vR2kxSVJzRW9HQVdVQVFZR0JnQUFBQUQvL3hvdFNFYkJLQmdGbEFFR0JnWUFBQUFBLy84YUxVaEd3U2dZQlpRQkJnWUdBQUFBQVAvL0dpMUlSc0VvR0FXVUFRWUdCZ0FBQUFELy94b3RTRWJCS0JnRmxBRUdCZ1lBQUFBQS8vOGFMVWhHd1NnWUJaUUJCZ1lHQUFBQUFQLy9HaTFJUnNFb0dBV1VBUVlHQmdBQUFBRC8veG90U0ViQktCZ0ZsQUVHQmdZQUFBQUEvLzhhTFVoR3dTZ1lCWlFCQmdZR0FBQUFBUC8vR2kxSVJzRW9HQVdVQVFZR0JnQUFBQUQvL3hvdFNFYkJLQmdGbEFFR0JnWUFBQUFBLy84YUxVaEd3U2dZQlpRQkJnWUdBQUFBQVAvL0dpMUlSc0VvR0dLQWtaRlJnSkdSc1lHUmtmRUNGRDlnWkdSY3dNaklxREFnUG1GZ1lBQUFBQUQvL3hvdFNFYkJLQmhDQUZTSU1EQXdISUM2Mk9ILy8vOEcvLy8vQnhVZ0lMRURqSXlNQm5UM0RRTURBd0FBQVAvL0dqMzhlUlNNZ2lFRUdCa1pRUVhHQWdZR2hnc01EQXdUb0M0SHNSc1lHQmhBQmNvQ1VPRkNWeDh4TURBQUFBQUEvLzhhYlpHTWdsRXdSQUNzNi9MLy8zOVFRUUpxbVlCQUFRTURRd0FEQTBQQy8vLy9RUVVLcUZXU1FGY2ZNVEF3QUFBQUFQLy9HaTFJUnNFb0dEb0Exb1dCQVZCaDRnQ2xOMEFGUVRSOXgwb1lHQmdBQUFBQS8vOGFMVWhHd1NnWXVnQlVnSUJhSHcvKy8vLy9ZTUI4d2NEQUFBQUFBUC8vWWhrTVFkalIwVzZBMUZTREFSQWZ1YS8zQUlwaDRFTkZSZVVGdWpwMEZJeUNnUVVmc09RSlVMY0czSjJCZG5sQUxSVDZGaW9NREF3QUFBQUEvLytpNjJCclIwZTdBclFFaFRYSDlLbGc3RWZvWUJPb3lYZWhvcUp5QXhGNlJzRW9HSklBT3RnS0dsZ0ZnWWIvLy84N1FNZEVRSGtLSkE2U0I4M2tnQW9kK2dBR0JnWUFBQUFBLy8raWQwRUM4dXgrT2xpMUVEUjZYVkZSZVlBSXRhTmdGQXdaQUIxd0JhWHJDZi8vLzRmTjJvREVRWGtMeEMvNC8vOC9mZE05QXdNREFBQUEvLzhhcmdVSkREd0V0WUJHQzVSUk1OZ0J0Q0RBQ1pBTEIraGFFbENoQWV2R2dBb1g4QlF3ZE9hR3ZvQ0JnUUVBQUFELy94cnVCUWtNYklRV0tIUnQ3bzBDNmdKb0U1N1ExT2FGLy8vL0Y1QnFNWFFoMXdSQzZrQmRDVW85QlMwSVFHTWJJTE5BV0o1SXJhQ0tFZGFOM3pEUUE2eHd3TURBQUFBQUFQLy9HaFNEclhRQS9xQUk2T2hvRHhnZG9CM1NBRlR6MnRQSUF3STBOQnNNb0swT1VDRUhTby9rQUZDQkE4SWcvZjJNakl5Ti8vLy9oNDJYREJ4Z1lHQUFBQUFBLy84YVNkTy9vQWc0QUowaEdnV2pnRzRBMU5xQkRwS0NXdVBrRmlMWXdPQm9ZVE13TUFBQUFBRC8veHBwNjBqNFJ3dVRVVUJQd01qSUNPb3VuYWRSYTJkd2pQMHhNREFBQUFBQS8vOGFyRjJiaDBqN0NkQkxYUU5vRTllQnpPbGpVR0d5QVZTWWpJNlpqQUphQWFUTmRkUlk0b0FOZkJ5b2dWVU13TURBQUFBQUFQLy9HcXdGeVlPS2lrcGNmVDk0S1l5MExxVUFXa0FRQytTaEJWVUFYWHd6Q2tZVW9FTWhBZ0tEWnlhU2dZRUJBQUFBLy84YTBsMmJpb3BLV0lHakFGMDdRZ3J3aDg0aWpZSlJRRFZBcDBJRUJBWlBRY0xBd0FBQUFBRC8veG9Xc3piUUxrcENSMGM3S0hEbms2QzFBZHBGR2dXamdGb0F0TEthbkVMa0lHeDFObHAzSGxSSndycnlvRzQ5ck9VOWVBb1NCZ1lHQUFBQUFQLy9HbGJUdnhVVmxRdWczWjE2SXJYWWc5U0RXamJJZ2gwZDdjUk1xWUZhUXdzSUtZSzJlb2dwckJhZ3U0TVlBSnJTUmtwa3VBYjBMa0lYTG9FUytRWmFqZzFCQjdKaGJsTEFzMFlDNXFZTFVEY04rV2w1UmtaR1VCZWJsRUZWMEZnZ2FEQVdkSVlJVVhIQ3lNZ0lDdHVBd1RRK3dzREF3QUFBQUFELy94cDI2MGhBWFIxbzVpVTJRZ3VnR0JrUVV4QWRoSTZ6RUFJT1JKcDNnTmpOVnREQ3NnR2FZWWtaRzlLSFl0RFU0L3lPam5aUU43Q0JuSUlMaDNzRW9HR1lRTUxpS21RMzFYZDB0QmRXVkZRU1hCQTJXQUYwNlRvcGF6cEFjUUJhems1U29mNy8vMzl3WlRDb2dvR0JnUUVBQUFELy94cXUwNytrUk9pUTZ0cEFXMHYzR1JnWTRra2NZRVlHSUwzM096cmFKMEFMQVVyZDh3QmFXQkpiaUdBRFEzMGJBeWdjaUkyUHhQLy8vNE4yNnc2UFdVTUdCZ1lBQUFBQS8vOGFsZ1VKZEcvTlJTS1Y2MU9hbWVnQlFHN3M2R2kvUUVLM2pSaVFEMTFYUTdMLzBkeERib0VHQjBPNWF3TWRZQVVWenNRQTBHcFVZbHF5UXdjd01EQUFBQUFBLy84YXpndlNTSW1zUWIxQURaclJhVFVUb0U5cVlRSWRCM2xBUmZjY3BKSTVBd1dJUGRydzRtQlowazVWd01EQUFBQUFBUC8vR3M0RkNTbE41VUhidmFGeElRSURSQmNtU082aHVCV0NCSWI2UUN1eEJRbkptd21IQkdCZ1lBQUFBQUQvL3hxMkJja3cycHpYUUljMUNReFFPNGlwTGFsZGlEQU01ZkVSYUxlR21QZ0J0VWFHNTNFV0RBd01BQUFBQVAvL0d1NTdiWWdkSnhtd2k0WHdBZWpzVXo0SldrQXpBWTRWRlpXTURBd01nZ3dNRElFa2RodnlvVE5DV0FGMFlKWGNOUklUUWVNRFVId1FMVzZHY3FGUGJHdDIySTJMd0FFREF3TUFBQUQvL3hydXh3Z1FPeW8rS0FzU0VtZWZFcEhYdFVEWGlteUE3aXRhUU1KZ1lBTzJwanJTRkMreDRDTjBqY1FFWE90V29HWUdVR3NhZW9BQXNlTnJ3L2R3TFFZR0JnQUFBQUQvL3hvOVJYNlFBdWlBSnJGcllScnhMWTZycUtoTUlLRmxFbzlqcklTVS9VeWcxb1lEYUUwUHZzVnZJRGxpRnZVTmNrQlVKVFRZRnBCUkZUQXdNQUFBQUFELy94b3RTQVl2SUhZQTd5R2VEWTdJZ0pUV0RiYk5qTVM2NXlPMGxURlNEcEFpcGlBQmhjbndCUXdNREFBQUFBRC8veG90U0NCZ01DWjZxdmE5U1Z4YmcxS1FRRnRIeEM0Mkt4amlYUlZhZ09GZHFESXdNQUFBQUFELy94cnVCUW14L2RmQnVNS1EyRUZOVXBaTEU2c1dQZHlJTGRRZURvT3V5aWdnRlRBd01BQUFBQUQvL3hxMkJRbTBuMDlzbjM1UUZTU2tIRzlBWWhlQzJBRS85TllIc1lQUm82ZjFZd2VEZFRDZk9vQ0JnUUVBQUFELy94ck9MUkpTRnBrTjFhWW5zVjBWa2dIYWdPdm96QVJsZ0pJOVNJTWZNREF3QUFBQUFQLy9HaTFJSUdDb0ZpUWt0YVJJdk4rSG5HMERJM0ZzaE5qdC84TzNWY0xBd0FBQUFBRC8veHJPQlFteHh5aGVIRDI3ZFJSUUFJaXRoSWJ2QVZvTURBd0FBQUFBLy84YWxnVkpSMGM3S2VkaWpKam1PQ21uNTVONU95R3RhMTFpV2p5MDNNbU5yU3RKYkN0cytKNFB6TURBQUFBQUFQLy9HbllGQ2JSdlQ4cWFpYUU4eTBCcTk0UFd4eVhRZWhjMU1abVczSDFKeExnZFc4dVYyQUxYZjloMmJ4Z1lHQUFBQUFELy94cU9MWklHRWxvakZ5bFlPRVZzcGlFbjh4SmJ5L0hqMnh1REJSRHI1b2RvZkdMRGlOYTFMbEhoQXIxK2sxUkFqQjZNY0lCZW00a2VYcmpBa0QwQkRpOWdZR0FBQUFBQS8vOGFWZ1VKdEV0RHlpWTNTaUtXbjhnelBFaE8xTkFGWGNTdWhpU2w3MDJzV3ZRTVEyekJKZytOQTVvQUV1NjZKYWRBSTBZUEx2dUpYWjhEYXBYUUxId0dEREF3TUFBQUFBRC8veG8yQlFsMFp5b3BKOGhUWS9FVTNzUUhMV2pJdldHTjJDWXpVUWtUNmhaaXI0dEV6eGlrakpjMDBQakVPV0wyREpHVVdhR1ptNWcxUjdqQ2daUUthUUtaTGFiQkN4Z1lHQUFBQUFELy94cnlCUWxvOFJhWlJ4RGlTMnpFTmxVSlpScEtUbWtqdHBhekozSUJHeW5qUmlnWkJ0cjlJelpNNU1rOXZwRklRRXk0eURNeU1oTGxYK2g1SXNTb2ZZaHI0eDIwcFVUc3BraFFnWFVlZXVMODhBQU1EQXdBQUFBQS8vOGFrZ1VKYUZ3QTFJU0czbU96bjR3QnRva0VaaVdJSFJQQW1tbWc1NWx1SVBIQ2FQU010NEdFN3MwR2ZCbVh4QzdmUmh4N1pVZ3BGRUh4Y1lHWWJnNDBMa2twZElndFlPc0pkU09naGNnRUlzZlVDTmxMYXNIUUQ3cFluSkdSa2VScFlYTDAwQlF3TURBQUFBQUEvLzlpL1AvL1A5MHNnOWFjKzRsUStoR2FtWkV2QzRJRm5nR0ZKM1NCQmxqeE5pMDdPdHBCaWFLZlJITVBRdDFMeXZaL1pOQ0l2b3NYMmwwanRxWDFFYnBoRHA3aGtjNFFJYVcxNW9pdGtJV2E5WUNNc0grSWROWEdBYVFMbjJDWFBzbWpuNlZDQ0VCdjlpYzJqTUZYYjZDUHIwQUxHVklHNWhVSmpkRkFMd3duWll3T0JrQmhCQ3FvUVA0Q3BmY0xvQlBtb2JNOElBd0tlMUM2Z2wrejh2Ly9mOURoVllNRE1EQXdBQUFBQVAvL0dxd0hHL0ZEQTR6YU43aGZKSExBY1FNWkJRa3QzRHVCaEhOQStLRjMxa3hBYWxHUjZoNmNMVFhRb2oybzJhUjJJZVdSRGxYQ3BaZlVhZEVHSWlza0JxamQ4WXlNakxES2lkaWpFWkhCUkdJR2V2Ly8vMThBYlMyUWFqNG9qRUFGRUx3UVltVEVYMDZBN0JrMFJ6Y3lNREFBQUFBQS8vOGFTY2NJd0E3YkliaUtGZHEwSC9DVHphRnVKWFVHZ3R4QytDS2hzUUpvaTRrVyszdElhcXBETTlCR0V1MkFoUXVwbWZ3akdmY2tFVHVlUkFrWVBBTzJEQXdNQUFBQUFQLy9HaWtGQ2FpbU5TQnhLVHcxcncwZ08vTkJXd2lKVkhRTE5nREtMQWxFaG84RERRN3FJV2RnTm9GT0J3WTVrSEtSRlZRdEtJeG90cUVTQ2daUFFjTEF3QUFBQUFELy94cnVCY2xCYUorZjVCRnlhQVplU0FVM0VLenBpWERMQWhvV0pnK2hMVFdpQnBpaGhZMEJsVE1LeWF0UmtUSXNMUXVUUkhLT1NJUjJnMEJ1bzJXcmR2QVVKQXdNREFBQUFBRC8veHF1QmNsR2FBSGlRT2FlRVJnb29ERER3TVprS040VUNDMU1IS25jYkFhRmt3R3BxM3VoWFQ4SE1yb1hPQUVwKzRCZ0FKckphVkg3Z3dvblEwcHV4QU1WZFAvLy93ZTVyWkJHaFIwOXJpZ2hEakF3TUFBQUFBRC8veHBPQmNsQmFLUXBWbFJVQmxCWWdJQUJ0UFoxSUxObE1oRTJKa01OdHpBZ1dra0cwQ3NkS0VtY3NKWmFBTGs3bjZIK0NvQVdidFNvZWNsYWQ0SlVtRFJTd1EwTTBIaFRvTlpoemYvLy93Y05VSU1Ha3ltTk13d3dhS2FCR1JnWUFBQUFBUC8vb3ZmMEwrekdkdGdvUFRtekhBK2hVNGtQWUZQRTFNcW8rQUIwNnJxQXdOcVFqOUFaSDR5Yi9xRnJYdkNCRGFUY3hnKzd5Z0dLaVZtdkFwdGlYRUNMZzVtaExZb0VhS1ltdHJhRVRRMkQvRTd4RGZ2UWRTRUpVRXhLalgwUnVrNW1Bd25MOE1rQ2pJeU1zRGlEVFgyVENrQ0ZOdmlhRVZxN2xXakF3TUFBQUFBQS8vK2lhMEZDRE1DMlNwTWVCUVVaYmhSQTZxZUM1LzhIOHVSMGFFWVdRRnFqd1lDMFF2VUN2YzljUVlwSEE2VFdCbnhkRUszakZGcW9HT0NaRWZvQXE0aElHVXlsSmtCYUo0SWNSdGdBT0gwTjJpc3RHQmdZQUFBQUFQLy9HblFGeVNnWUJhTmdpQUVHQmdZQUFBQUEvLzhhdlk1aUZJeUNVVUFaWUdCZ0FBQUFBUC8vR2kxSVJzRW9HQVdVQVFZR0JnQUFBQUQvL3hvdFNFYkJLQmdGbEFFR0JnWUFBQUFBLy84YUxVaEd3U2dZQlpRQkJnWUdBQUFBQVAvL0dpMUlSc0VvR0FXVUFRWUdCZ0FBQUFELy94b3RTRWJCS0JnRmxBRUdCZ1lBQUFBQS8vOGFMVWhHd1NnWUJaUUJCZ1lHQUFBQUFQLy9HaTFJUnNFb0dBV1VBUVlHQmdBQUFBRC8veG90U0ViQktCZ0ZsQUVHQmdZQUFBQUEvLzhhTFVoR3dTZ1lCWlFCQmdZR0FBQUFBUC8vR2kxSVJzRW9HQVdVQVFZR0JnQUFBQUQvL3hvdFNFYkJLQmdGbEFFR0JnWUFBQUFBLy84YUxVaEd3U2dZQlpRQkJnWUdBQUFBQVAvL0dpMUlSc0VvR0FXVUFRWUdCZ0FBQUFELy94b3RTRWJCS0JnRmxBRUdCZ1lBQUFBQS8vOGFMVWhHd1NnWUJaUUJCZ1lHQUFBQUFQLy9HaTFJUnNFb0dBV1VBUVlHQmdBQUFBRC8veG90U0ViQktCZ0ZsQUVHQmdZQUFBQUEvLzhhTFVoR3dTZ1lCWlFCQmdZR0FBQUFBUC8vR2kxSVJzRW9HQVdVQVFZR0JnQUFBQUQvL3hvdFNFYkJLQmdGbEFFR0JnWUFBQUFBLy84YUxVaEd3U2dZQlpRQkJnWUdBQUFBQVAvL0dpMUlSc0VvR0FXVUFRWUdCZ0FBQUFELy94b3RTRWJCS0JnRmxBRUdCZ1lBQUFBQS8vOGFMVWhHd1NnWUJaUUJCZ1lHQUFBQUFQLy9HaTFJUnNFb0dBV1VBUVlHQmdBQUFBRC8veG90U0ViQktCZ0ZsQUVHQmdZQUFBQUEvLzhEQUVVUnpvUjB6cEZHQUFBQUFFbEZUa1N1UW1DQyIvPjxsaW5lIHgxPSI4NjEuMjM4IiB5MT0iNjMuNzk2IiB4Mj0iODYxLjIzOCIgeTI9IjIxNy40NjYiIHN0cm9rZT0iI0Q5RDlEOSIgc3Ryb2tlLXdpZHRoPSIxMi43Ii8+PC9zdmc+") no-repeat right 0 bottom 8mm / 33.2mm 8.3mm;
+      font: 12pt "Arial", "Liberation Sans", sans-serif; color: #404040;
+      text-align: right; vertical-align: bottom; padding: 0 2.4mm 9.8mm 0;
+    }
+  }
+  @page cover { margin: 0; @top-right { content: none; background: none; } @bottom-right { content: none; background: none; } }
+  @page back  { margin: 0; @top-right { content: none; background: none; } @bottom-right { content: none; background: none; } }
+
+  html { font-family: "Arial", "Liberation Sans", sans-serif; font-size: 12pt; line-height: 1.5; color: var(--ink); }
+  body { margin: 0; counter-reset: fig tbl; }
+  p { margin: 0 0 9pt; text-align: justify; hyphens: auto; }
+  a { color: var(--link); text-decoration: none; }
+  strong { color: var(--ink); }
+  code { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; font-size: 10pt; background: var(--grey); padding: 0 1mm; border-radius: 1mm; }
+  pre { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; font-size: 8.6pt; line-height: 1.35; background: var(--grey); border: 0.5pt solid var(--line); border-radius: 2mm; padding: 3mm 4mm; margin: 0 0 10pt; white-space: pre-wrap; break-inside: avoid; }
+
+  h1 { font-size: 22pt; font-weight: bold; margin: 18pt 0; break-before: page; break-after: avoid; line-height: 1.25; }
+  h1.sin-salto { break-before: auto; margin-top: 22pt; }
+  h2 { font-size: 16pt; font-weight: bold; margin: 14pt 0 7pt; break-after: avoid; line-height: 1.3; }
+  h3 { font-size: 12pt; font-weight: bold; margin: 10pt 0 5pt; break-after: avoid; }
+  ul, ol { margin: 0 0 9pt; padding-left: 6.4mm; }
+  li { margin-bottom: 3pt; text-align: justify; }
+
+  table { width: 100%; border-collapse: collapse; margin: 0 0 12pt; font-size: 10pt; line-height: 1.35; }
+  caption { caption-side: top; text-align: left; font-size: 12pt; font-weight: bold; padding: 6pt 0; counter-increment: tbl; }
+  caption::before { content: "Tabla " counter(tbl) ": "; }
+  th { background: var(--grey); text-align: center; font-weight: bold; padding: 4pt 6pt; border: 0.5pt solid #000; vertical-align: middle; }
+  td { padding: 4pt 6pt; border: 0.5pt solid #000; vertical-align: middle; }
+  tr { break-inside: avoid; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+
+  figure { margin: 4pt 0 12pt; text-align: center; break-inside: avoid; }
+  figure img { max-width: 100%; display: block; margin: 0 auto; }
+  figure.alta img { max-height: var(--mh, 160mm); width: auto; }
+  figure.media img { max-height: 100mm; width: auto; }
+  figure svg { width: 132mm; max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  figcaption { font-size: 10pt; line-height: 1.35; margin-top: 4pt; counter-increment: fig; }
+  figcaption::before { content: "Figura " counter(fig) ": "; font-weight: bold; }
+
+  .nota, .dato { background: var(--grey); border-left: 3mm solid var(--yellow); padding: 3mm 4mm; margin: 0 0 12pt; font-size: 11pt; line-height: 1.4; break-inside: avoid; }
+  .dato { border-left-color: #A6A6A6; }
+  .nota p:last-child, .dato p:last-child { margin-bottom: 0; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin: 2mm 0 12pt; }
+  .kpi { background: var(--grey); border-top: 1.4mm solid var(--yellow); border-radius: 2mm; padding: 3mm; text-align: center; break-inside: avoid; }
+  .kpi b { display: block; font-size: 17pt; line-height: 1.3; }
+  .kpi span { font-size: 9pt; line-height: 1.3; display: block; }
+
+  /* Portada: medidas de la plantilla (carta, 21,59 x 27,94 cm) */
+  .portada { page: cover; position: relative; width: 215.9mm; height: 279.4mm; overflow: hidden; break-after: page; background: #fff; }
+  .portada .logo { position: absolute; left: 7.4mm; top: 0.6mm; width: 57.4mm; height: 15.6mm; }
+  .portada .barra { position: absolute; left: 72.9mm; top: 5.3mm; width: 133mm; height: 7.3mm; border-radius: 4mm; background: #E7E8E9; }
+  .portada .foto { position: absolute; left: 10.3mm; top: 18.6mm; width: 195.7mm; height: 106.9mm; border-radius: 5.2mm; border: 1pt solid #AEAAAA; box-sizing: border-box; object-fit: cover; }
+  .portada .acento { position: absolute; left: 10.3mm; top: 145.6mm; width: 3mm; height: 20mm; background: var(--yellow); }
+  .portada .titulos { position: absolute; left: 19.05mm; top: 143mm; right: 19.05mm; }
+  .portada .titulos .t { font-size: 28pt; font-weight: bold; line-height: 1.15; letter-spacing: -0.2pt; margin: 0 0 3mm; }
+  .portada .titulos .b { font-size: 22pt; line-height: 1.3; margin: 0; }
+  .portada .datos { position: absolute; left: 19.05mm; right: 19.05mm; top: 183mm; font-size: 12pt; line-height: 1.5; }
+  .portada .datos div { margin-bottom: 1.5mm; }
+  .portada .datos b { font-weight: bold; }
+  .portada .repos { position: absolute; left: 19.05mm; right: 19.05mm; bottom: 18mm; font-size: 10pt; line-height: 1.5; border-top: 0.5pt solid var(--line); padding-top: 3mm; }
+
+  /* Índice (estilos TDC1/TDC2 de la plantilla: punteado a la derecha con número de página) */
+  .indice h1 { break-before: auto; margin-top: 0; }
+  .indice ol { list-style: none; padding: 0; margin: 0; }
+  .indice li { display: flex; align-items: baseline; margin: 0; padding: 0; text-align: left; line-height: 1.32; }
+  .indice li .t { flex: 0 1 auto; }
+  .indice li .p { flex: 0 0 auto; margin-left: 2mm; }
+  .indice li .fill { flex: 1 1 auto; border-bottom: 0.8pt dotted #7F7F7F; margin: 0 1.5mm; transform: translateY(-1mm); min-width: 8mm; }
+  .indice li.n1 { font-size: 12pt; margin-top: 3pt; }
+  .indice li.n2 { padding-left: 12.5mm; font-size: 11pt; }
+
+  /* Última página: aviso legal de la plantilla */
+  .legal { page: back; position: relative; width: 215.9mm; height: 279.4mm; overflow: hidden; break-before: page; background: #fff; }
+  .legal .bloque { position: absolute; left: 9.7mm; top: 96mm; width: 195mm; height: 125mm; border-radius: 6mm; background: #E6E7E8; }
+  .legal .bloque img { position: absolute; left: 55mm; top: 12mm; width: 83mm; }
+  .legal .bloque p { position: absolute; left: 12mm; right: 12mm; top: 56mm; margin: 0; font-size: 10pt; line-height: 1.38; text-align: center; hyphens: none; }
+</style>
+</head>
+<body>
+<img src="img/logo-pie.png" alt="" style="position:absolute;width:1px;height:1px;opacity:0">
+
+<section class="portada">
+  <img class="logo" src="img/logo-encabezado.png" alt="Duoc UC Online">
+  <div class="barra"></div>
+  <img class="foto" src="img/portada.jpg" alt="">
+  <div class="acento"></div>
+  <div class="titulos">
+    <p class="t">Desarrollo Backend III</p>
+    <p class="b">Informe técnico final: modernización del sistema legacy del Banco XYZ</p>
+  </div>
+  <div class="datos">
+    <div><b>Asignatura:</b> Desarrollo Backend III (PBY2203)</div>
+    <div><b>Evaluación:</b> Evaluación Final Transversal · Entrega individual</div>
+    <div><b>Estudiante:</b> Carlos Rodriguez</div>
+    <div><b>Fecha:</b> Octubre de 2026</div>
+  </div>
+  <div class="repos">
+    <div><b>Código fuente</b></div>
+    <div>github.com/CarlosJRF/xyz_bank_batch · Spring Batch</div>
+    <div>github.com/CarlosJRF/xyz_bank_bff · BFF y microservicios de dominio</div>
+    <div>github.com/CarlosJRF/kafka_S8 · Plataforma Spring Cloud y mensajería</div>
+  </div>
+</section>
+
+<section class="indice">
+  <h1>Índice</h1>
+  <ol>
+<li class="n1"><span class="t">1. Resumen ejecutivo</span><span class="fill"></span><span class="p">3</span></li>
+<li class="n1"><span class="t">2. Contexto y problema</span><span class="fill"></span><span class="p">4</span></li>
+<li class="n2"><span class="t">2.1 Situación del sistema legacy</span><span class="fill"></span><span class="p">4</span></li>
+<li class="n2"><span class="t">2.2 Alcance de la solución</span><span class="fill"></span><span class="p">4</span></li>
+<li class="n1"><span class="t">3. Procesos clave de la migración</span><span class="fill"></span><span class="p">5</span></li>
+<li class="n1"><span class="t">4. Propuesta de arquitectura</span><span class="fill"></span><span class="p">6</span></li>
+<li class="n2"><span class="t">4.1 Requerimientos clave del negocio</span><span class="fill"></span><span class="p">6</span></li>
+<li class="n2"><span class="t">4.2 Decisiones de arquitectura y alternativas descartadas</span><span class="fill"></span><span class="p">7</span></li>
+<li class="n2"><span class="t">4.3 Tecnologías</span><span class="fill"></span><span class="p">8</span></li>
+<li class="n2"><span class="t">4.4 Arquitectura global</span><span class="fill"></span><span class="p">9</span></li>
+<li class="n2"><span class="t">4.5 Casos de uso</span><span class="fill"></span><span class="p">10</span></li>
+<li class="n2"><span class="t">4.6 Componentes del BFF</span><span class="fill"></span><span class="p">11</span></li>
+<li class="n1"><span class="t">5. Componentes desarrollados</span><span class="fill"></span><span class="p">13</span></li>
+<li class="n2"><span class="t">5.1 Migración de procesos batch: xyz_bank_batch</span><span class="fill"></span><span class="p">13</span></li>
+<li class="n2"><span class="t">5.2 BFF y microservicios de dominio: xyz_bank_bff</span><span class="fill"></span><span class="p">16</span></li>
+<li class="n2"><span class="t">5.3 Plataforma Spring Cloud y mensajería: kafka_S8</span><span class="fill"></span><span class="p">17</span></li>
+<li class="n1"><span class="t">6. Integración entre componentes</span><span class="fill"></span><span class="p">19</span></li>
+<li class="n2"><span class="t">6.1 Flujo de una consulta en el canal web</span><span class="fill"></span><span class="p">21</span></li>
+<li class="n2"><span class="t">6.2 Flujo de la ingesta de eventos</span><span class="fill"></span><span class="p">22</span></li>
+<li class="n1"><span class="t">7. Seguridad y resiliencia</span><span class="fill"></span><span class="p">22</span></li>
+<li class="n1"><span class="t">8. Despliegue en la nube</span><span class="fill"></span><span class="p">24</span></li>
+<li class="n2"><span class="t">8.1 Contenerización con Docker</span><span class="fill"></span><span class="p">24</span></li>
+<li class="n2"><span class="t">8.2 Instancia EC2 y Security Group</span><span class="fill"></span><span class="p">24</span></li>
+<li class="n2"><span class="t">8.3 Script de despliegue</span><span class="fill"></span><span class="p">25</span></li>
+<li class="n2"><span class="t">8.4 Mediciones del despliegue</span><span class="fill"></span><span class="p">26</span></li>
+<li class="n2"><span class="t">8.5 Escalabilidad horizontal</span><span class="fill"></span><span class="p">27</span></li>
+<li class="n1"><span class="t">9. Pruebas y resultados</span><span class="fill"></span><span class="p">28</span></li>
+<li class="n2"><span class="t">9.1 Pruebas automatizadas</span><span class="fill"></span><span class="p">28</span></li>
+<li class="n2"><span class="t">9.2 Pruebas funcionales del despliegue</span><span class="fill"></span><span class="p">28</span></li>
+<li class="n2"><span class="t">9.3 Comparación con el sistema legacy</span><span class="fill"></span><span class="p">29</span></li>
+<li class="n1"><span class="t">10. Desafíos y soluciones</span><span class="fill"></span><span class="p">31</span></li>
+<li class="n1"><span class="t">11. Propuestas de mejora y próximos pasos</span><span class="fill"></span><span class="p">32</span></li>
+<li class="n1"><span class="t">12. Conclusiones</span><span class="fill"></span><span class="p">33</span></li>
+<li class="n1"><span class="t">Anexo A. Repositorios y puertos</span><span class="fill"></span><span class="p">33</span></li>
+</ol>
+</section>
+<h1 id="resumen" class="sin-salto" style="break-before: page;">1. Resumen ejecutivo</h1>
+<p>El Banco XYZ opera desde hace más de 30 años sobre una plataforma legacy en COBOL y scripts Shell que se ejecuta en servidores mainframe. Sus limitaciones de escalabilidad, el alto costo de mantención y la dificultad para integrar nuevas tecnologías motivaron el proyecto: <strong>migrar los procesos y servicios del sistema legacy a una arquitectura de microservicios, contenerizada y desplegable en la nube</strong>.</p>
+<p>La solución se construyó en tres repositorios que cubren las tres partes del encargo y se integran como un solo ecosistema:</p>
+<ul>
+  <li><strong>xyz_bank_batch</strong> (Parte 1): reescritura de los procesos batch con Spring Batch 6. Un <code>masterJob</code> ejecuta en paralelo los tres procesos del legacy (transacciones diarias, intereses y estados de cuenta), valida cada registro, corrige o rechaza los datos inválidos con trazabilidad completa y tolera fallos transitorios de la base de datos.</li>
+  <li><strong>xyz_bank_bff</strong> (Parte 2 y servicios de dominio): un Backend for Frontend con tres canales independientes (web, móvil y cajero automático), cada uno con su respuesta y su control de acceso, apoyado en tres microservicios de dominio: cuentas, transacciones y clientes.</li>
+  <li><strong>kafka_S8</strong> (Parte 3): plataforma Spring Cloud con Config Server, Eureka, API Gateway, Auth Server OAuth2, ingesta y procesamiento de eventos sobre Apache Kafka, y un cliente protegido con Resilience4j.</li>
+</ul>
+<p>Los tres sistemas se despliegan con Docker Compose en una sola instancia EC2 mediante un script que los levanta en orden y ejecuta pruebas de humo. Las cifras de este informe provienen de una ejecución completa de ese despliegue.</p>
+
+<div class="kpis">
+  <div class="kpi"><b>3</b><span>sistemas y 12 servicios con Dockerfile</span></div>
+  <div class="kpi"><b>14</b><span>contenedores sanos en el despliegue completo</span></div>
+  <div class="kpi"><b>738 ms</b><span>mediana del batch con 3.000 registros</span></div>
+  <div class="kpi"><b>≈ 3,9 GiB</b><span>pico de memoria medido durante los builds</span></div>
+</div>
+
+<h1 id="contexto" class="sin-salto">2. Contexto y problema</h1>
+<h2 id="situacion">2.1 Situación del sistema legacy</h2>
+<p>El sistema de gestión bancaria procesa transacciones, genera estados de cuenta, calcula intereses y administra clientes. Está escrito en COBOL y scripts Shell sobre mainframe. El encargo identifica tres problemas de fondo:</p>
+<ul>
+  <li><strong>Procesos batch rígidos:</strong> el reporte de transacciones diarias, el cálculo de intereses mensuales y los estados de cuenta anuales dependen de programas difíciles de mantener y de escalar.</li>
+  <li><strong>Un backend monolítico para todos los canales:</strong> web, móvil y cajeros reciben los mismos datos, lo que genera sobrecarga, y su evolución queda atada a los tiempos del backend.</li>
+  <li><strong>Falta de tolerancia a fallos y seguridad centralizada:</strong> un problema en un módulo puede afectar a todo el sistema, y la seguridad limitada y centralizada aumenta el riesgo en entornos distribuidos.</li>
+</ul>
+<h2 id="alcance">2.2 Alcance de la solución</h2>
+<table>
+  <caption>Partes del encargo y su resolución</caption>
+  <thead><tr><th style="width:25%">Parte del encargo</th><th style="width:25%">Repositorio</th><th>Qué se implementó</th></tr></thead>
+  <tbody>
+    <tr><td>Parte 1: migración de procesos batch con Spring Batch</td><td><code>xyz_bank_batch</code></td><td>Tres procesos (transacciones, intereses, estados anuales) en un job maestro con validación, skip, retry y bitácora de calidad de datos</td></tr>
+    <tr><td>Parte 2: patrón Backend for Frontend</td><td><code>xyz_bank_bff</code></td><td>BFF para web, móvil y cajero, con autenticación por canal y HTTPS; microservicios de cuentas, transacciones y clientes</td></tr>
+    <tr><td>Parte 3: microservicios resilientes con Spring Cloud</td><td><code>kafka_S8</code> y <code>xyz_bank_bff</code></td><td>Config Server, Eureka, balanceo y enrutamiento, OAuth2, Resilience4j, tópicos Kafka con productores y consumidores, Docker Compose y preparación para AWS</td></tr>
+  </tbody>
+</table>
+<p>Los datos de entrada provienen de <code>fin_legacy_data</code>, que simula la salida del legacy e incluye errores deliberados (montos vacíos o negativos, fechas en formatos mixtos, tipos desconocidos, edades fuera de rango).</p>
+
+<h1 id="procesos" class="sin-salto">3. Procesos clave de la migración</h1>
+<p>La migración se organizó en torno a cinco procesos críticos que se complementan: sin el batch no se migra la lógica del legacy; sin microservicios y BFF persisten el acoplamiento y la sobrecarga; sin seguridad distribuida el modelo queda expuesto; y sin mensajería los servicios siguen acoplados. Cada uno responde a una limitación concreta del legacy y tiene un componente verificable en el código.</p>
+<table>
+  <caption>Procesos clave identificados para la migración</caption>
+  <thead><tr><th style="width:4%">N°</th><th style="width:19%">Proceso clave</th><th style="width:22%">Limitación del legacy que resuelve</th><th>Solución implementada</th><th style="width:15%">Dónde</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><strong>Migración de procesos batch a Spring Batch</strong></td><td>Programas COBOL y Shell difíciles de mantener, sin reintentos ni trazabilidad</td><td>Tres jobs paralelos con lectura, validación y escritura por chunks de 100; skip de datos inválidos, retry ante fallos transitorios de base de datos y bitácora <code>data_quality_log</code></td><td><code>xyz_bank_batch</code></td></tr>
+    <tr><td>2</td><td><strong>División del monolito en microservicios</strong></td><td>Escalado y evolución acoplados; un fallo afecta a todo el sistema</td><td>Microservicios independientes de cuentas, transacciones y clientes, más servicios de ingesta y procesamiento, cada uno con su base de datos y su ciclo de despliegue</td><td><code>xyz_bank_bff</code>, <code>kafka_S8</code></td></tr>
+    <tr><td>3</td><td><strong>Implementación del patrón BFF</strong></td><td>Todos los canales reciben los mismos datos</td><td>Un BFF con tres rutas y respuestas distintas: detalle completo en web, resumen liviano en móvil y saldo mínimo en cajero</td><td><code>xyz_bank_bff</code></td></tr>
+    <tr><td>4</td><td><strong>Seguridad distribuida con Spring Cloud Security</strong></td><td>Seguridad centralizada y limitada</td><td>Auth Server OAuth2 que emite JWT con scopes, validados en el gateway y de nuevo en cada servicio; en el BFF, HTTPS y roles por canal</td><td><code>kafka_S8</code>, <code>xyz_bank_bff</code></td></tr>
+    <tr><td>5</td><td><strong>Mensajería asíncrona con Apache Kafka</strong></td><td>Procesamiento síncrono y acoplado; sin integración de eventos</td><td>Ingesta que valida y publica en tópicos; consumidor idempotente que persiste en PostgreSQL; reintentos y cola de mensajes fallidos (DLT)</td><td><code>kafka_S8</code></td></tr>
+  </tbody>
+</table>
+
+<h1 id="arquitectura">4. Propuesta de arquitectura</h1>
+<h2 id="requerimientos">4.1 Requerimientos clave del negocio</h2>
+<p>A partir del contexto del banco se definieron cinco requerimientos clave. Cada decisión de arquitectura se justifica contra alguno de ellos.</p>
+<table>
+  <caption>Requerimientos clave y decisiones que los resuelven</caption>
+  <thead><tr><th style="width:22%">Requerimiento del negocio</th><th style="width:26%">Decisión de arquitectura</th><th>Justificación</th></tr></thead>
+  <tbody>
+    <tr><td><strong>RN1. Escalabilidad y bajo costo de mantención</strong></td><td>Microservicios contenerizados con Docker; servicios registrados en Eureka y balanceados con <code>lb://</code></td><td>Cada servicio se construye, despliega y escala por separado. El escalado horizontal se verificó: al replicar <code>data-processor-service</code> a 2 instancias, Eureka registró ambas y el gateway enruta con <code>lb://</code> entre las instancias registradas. Reemplaza la dependencia de un único mainframe.</td></tr>
+    <tr><td><strong>RN2. Respuestas adecuadas a cada canal</strong></td><td>Patrón BFF con un controlador y un servicio de adaptación por canal</td><td>La web necesita datos completos; el móvil, pocos datos para ahorrar ancho de banda; el cajero, solo lo imprescindible y seguro. Un BFF por canal evita que un backend único sirva a todos lo mismo, y permite que los equipos de frontend y backend evolucionen en paralelo.</td></tr>
+    <tr><td><strong>RN3. Seguridad en un entorno distribuido</strong></td><td>OAuth2 con JWT y scopes (Client Credentials); validación en el gateway y en cada servicio; HTTPS y roles en el BFF; microservicios internos sin exposición pública</td><td>Reemplaza la seguridad centralizada por defensa en profundidad: aunque el gateway ya rechace un token inválido, cada servicio lo vuelve a validar y aplica sus propios scopes. Los servicios sin autenticación propia solo son alcanzables desde la red interna de Docker.</td></tr>
+    <tr><td><strong>RN4. Disponibilidad y tolerancia a fallos</strong></td><td>Resilience4j (circuit breaker, retry, rate limiter) con respuesta alternativa; DLT en Kafka; degradación controlada en el BFF</td><td>Un servicio caído no debe tumbar a los demás. Con el procesador detenido, el cliente resiliente sigue respondiendo con la última respuesta buena; si <code>ms-clientes</code> falla, el BFF entrega igual la cuenta con el cliente en <code>null</code>.</td></tr>
+    <tr><td><strong>RN5. Integridad y equivalencia de los datos migrados</strong></td><td>Validación explícita por tipo de error, bitácora de calidad, escritura idempotente y esquema de base de datos con restricciones</td><td>Los procesos nuevos deben producir resultados equivalentes a los del legacy sin perder ni duplicar datos. Cada fila termina persistida, corregida o rechazada con su motivo, y repetir una ejecución no genera duplicados.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisiones">4.2 Decisiones de arquitectura y alternativas descartadas</h2>
+<table>
+  <caption>Registro de decisiones</caption>
+  <thead><tr><th style="width:24%">Decisión</th><th style="width:34%">Motivo</th><th>Alternativa descartada</th></tr></thead>
+  <tbody>
+    <tr><td>Spring Batch para los procesos batch</td><td>Chunks, skip, retry, reinicio y paralelismo ya resueltos por el framework</td><td>Mantener scripts Shell: sin tolerancia a fallos ni métricas</td></tr>
+    <tr><td>Un BFF unificado con tres canales</td><td>Un solo despliegue, con rutas, roles y respuestas independientes por canal</td><td>Una API única para todos los canales</td></tr>
+    <tr><td>Kafka para la ingesta</td><td>Desacopla la validación del procesamiento, permite reintentos y deja los errores en una cola propia</td><td>Llamadas síncronas entre servicios</td></tr>
+    <tr><td>Config Server, Eureka y Gateway de Spring Cloud</td><td>Configuración centralizada, descubrimiento dinámico y punto de entrada único</td><td>URL fijas y archivos de configuración por servicio</td></tr>
+    <tr><td>Un repositorio por sistema</td><td>Cada sistema tiene su ciclo de vida y su Compose; se integran por documentación y por red</td><td>Un único monorepositorio</td></tr>
+    <tr><td>Docker Compose en una sola instancia EC2</td><td>Despliegue reproducible y de bajo costo para el alcance del proyecto</td><td>ECS o Kubernetes: más complejos y costosos para este alcance</td></tr>
+    <tr><td>Bases propias por servicio: H2 en memoria en los microservicios del BFF; PostgreSQL en la plataforma y el batch</td><td>Cada servicio es dueño de sus datos; H2 simplifica la demostración de los microservicios de dominio</td><td>Una base compartida entre servicios</td></tr>
+  </tbody>
+</table>
+
+<h2 id="tecnologias">4.3 Tecnologías</h2>
+<table>
+  <caption>Tecnologías utilizadas</caption>
+  <thead><tr><th style="width:26%">Ámbito</th><th>Tecnología</th></tr></thead>
+  <tbody>
+    <tr><td>Lenguaje y framework</td><td>Java 21, Spring Boot 4.1, Spring Batch 6, Spring Cloud 2025.1, Spring Security, Spring Data JPA</td></tr>
+    <tr><td>Mensajería y datos</td><td>Apache Kafka 3.9 (modo KRaft), PostgreSQL 16, H2 en memoria</td></tr>
+    <tr><td>Resiliencia y descubrimiento</td><td>Resilience4j, Eureka, Spring Cloud Gateway, Spring Cloud Config</td></tr>
+    <tr><td>Seguridad</td><td>OAuth2 Client Credentials con Spring Authorization Server, JWT firmados con RSA, HTTP Basic y TLS (PKCS12) en el BFF</td></tr>
+    <tr><td>Contenedores y nube</td><td>Docker, Docker Compose, Amazon EC2 (Amazon Linux 2023)</td></tr>
+  </tbody>
+</table>
+
+<h2 id="arq-global" style="break-before: page; margin-top: 0;">4.4 Arquitectura global</h2>
+<p>El diagrama muestra los tres sistemas, sus puertos y las interacciones entre sus componentes. Los canales llegan al BFF por HTTPS; los clientes de integración entran por el API Gateway; el batch trabaja de forma independiente sobre su propia base.</p>
+<figure class="alta">
+  <img src="../diagramas/arquitectura-global.png" alt="Arquitectura global de la solución">
+  <figcaption>Arquitectura global de la solución del Banco XYZ</figcaption>
+</figure>
+
+<h2 id="casos-uso">4.5 Casos de uso</h2>
+<figure>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 614" font-family="Liberation Sans, DejaVu Sans, sans-serif" role="img" aria-label="Casos de uso de la solución">
+<rect x="236" y="8" width="396" height="568" rx="8" fill="#fbfcfe" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="434" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#17324d">Solución Banco XYZ</text>
+<line x1="176" y1="76.0" x2="270" y2="76.0" stroke="#64748b" stroke-width="1.3"/>
+<line x1="176" y1="130.0" x2="270" y2="130.0" stroke="#64748b" stroke-width="1.3"/>
+<line x1="176" y1="184.0" x2="270" y2="184.0" stroke="#64748b" stroke-width="1.3"/>
+<line x1="176" y1="258.0" x2="270" y2="238.0" stroke="#64748b" stroke-width="1.3"/>
+<line x1="176" y1="258.0" x2="270" y2="278.0" stroke="#64748b" stroke-width="1.3"/>
+<line x1="176" y1="392.0" x2="270" y2="332.0" stroke="#64748b" stroke-width="1.3"/>
+<line x1="176" y1="392.0" x2="270" y2="372.0" stroke="#64748b" stroke-width="1.3"/>
+<line x1="176" y1="392.0" x2="270" y2="412.0" stroke="#64748b" stroke-width="1.3"/>
+<line x1="176" y1="392.0" x2="270" y2="452.0" stroke="#64748b" stroke-width="1.3"/>
+<line x1="176" y1="526.0" x2="270" y2="506.0" stroke="#64748b" stroke-width="1.3"/>
+<line x1="176" y1="526.0" x2="270" y2="546.0" stroke="#64748b" stroke-width="1.3"/>
+<rect x="8" y="54.0" width="168" height="44" rx="4" fill="#e6f0ff" stroke="#2f5fa7" stroke-width="1.6"/>
+<text x="92.0" y="80.0" text-anchor="middle" font-size="11.5" fill="#102a56">Cliente web</text>
+<rect x="8" y="108.0" width="168" height="44" rx="4" fill="#e6f0ff" stroke="#2f5fa7" stroke-width="1.6"/>
+<text x="92.0" y="134.0" text-anchor="middle" font-size="11.5" fill="#102a56">Cliente de app móvil</text>
+<rect x="8" y="162.0" width="168" height="44" rx="4" fill="#e6f0ff" stroke="#2f5fa7" stroke-width="1.6"/>
+<text x="92.0" y="188.0" text-anchor="middle" font-size="11.5" fill="#102a56">Cajero automático</text>
+<rect x="8" y="236.0" width="168" height="44" rx="4" fill="#e6f0ff" stroke="#2f5fa7" stroke-width="1.6"/>
+<text x="92.0" y="262.0" text-anchor="middle" font-size="11.5" fill="#102a56">Operador de plataforma</text>
+<rect x="8" y="370.0" width="168" height="44" rx="4" fill="#e6f0ff" stroke="#2f5fa7" stroke-width="1.6"/>
+<text x="92.0" y="389.0" text-anchor="middle" font-size="11.5" fill="#102a56">Cliente de integración</text>
+<text x="92.0" y="403.0" text-anchor="middle" font-size="10" fill="#102a56">(sistema o Postman)</text>
+<rect x="8" y="504.0" width="168" height="44" rx="4" fill="#e6f0ff" stroke="#2f5fa7" stroke-width="1.6"/>
+<text x="92.0" y="530.0" text-anchor="middle" font-size="11.5" fill="#102a56">Analista de datos</text>
+<rect x="270" y="61.0" width="330" height="30" rx="15.0" fill="#eefaf0" stroke="#2f855a" stroke-width="1.5"/>
+<text x="435.0" y="80.0" text-anchor="middle" font-size="11.5" fill="#14452f">Consultar detalle de cuenta con perfil y resumen</text>
+<rect x="270" y="115.0" width="330" height="30" rx="15.0" fill="#eefaf0" stroke="#2f855a" stroke-width="1.5"/>
+<text x="435.0" y="134.0" text-anchor="middle" font-size="11.5" fill="#14452f">Consultar saldo y últimos movimientos</text>
+<rect x="270" y="169.0" width="330" height="30" rx="15.0" fill="#eefaf0" stroke="#2f855a" stroke-width="1.5"/>
+<text x="435.0" y="188.0" text-anchor="middle" font-size="11.5" fill="#14452f">Consultar saldo en cajero</text>
+<rect x="270" y="223.0" width="330" height="30" rx="15.0" fill="#eefaf0" stroke="#2f855a" stroke-width="1.5"/>
+<text x="435.0" y="242.0" text-anchor="middle" font-size="11.5" fill="#14452f">Administrar perfiles de clientes</text>
+<rect x="270" y="263.0" width="330" height="30" rx="15.0" fill="#e0f2fe" stroke="#0369a1" stroke-width="1.5"/>
+<text x="435.0" y="282.0" text-anchor="middle" font-size="11.5" fill="#0c4a6e">Desplegar y escalar en AWS EC2</text>
+<rect x="270" y="317.0" width="330" height="30" rx="15.0" fill="#fff4dc" stroke="#b7791f" stroke-width="1.5"/>
+<text x="435.0" y="336.0" text-anchor="middle" font-size="11.5" fill="#5f370e">Obtener token OAuth2</text>
+<rect x="270" y="357.0" width="330" height="30" rx="15.0" fill="#fff4dc" stroke="#b7791f" stroke-width="1.5"/>
+<text x="435.0" y="376.0" text-anchor="middle" font-size="11.5" fill="#5f370e">Ejecutar la ingesta de archivos legados</text>
+<rect x="270" y="397.0" width="330" height="30" rx="15.0" fill="#fff4dc" stroke="#b7791f" stroke-width="1.5"/>
+<text x="435.0" y="416.0" text-anchor="middle" font-size="11.5" fill="#5f370e">Consultar estadísticas, cuentas y rechazos</text>
+<rect x="270" y="437.0" width="330" height="30" rx="15.0" fill="#fff4dc" stroke="#b7791f" stroke-width="1.5"/>
+<text x="435.0" y="456.0" text-anchor="middle" font-size="11.5" fill="#5f370e">Consultar con resiliencia (circuit breaker)</text>
+<rect x="270" y="491.0" width="330" height="30" rx="15.0" fill="#f3e8ff" stroke="#6b46c1" stroke-width="1.5"/>
+<text x="435.0" y="510.0" text-anchor="middle" font-size="11.5" fill="#322659">Ejecutar los procesos batch</text>
+<rect x="270" y="531.0" width="330" height="30" rx="15.0" fill="#f3e8ff" stroke="#6b46c1" stroke-width="1.5"/>
+<text x="435.0" y="550.0" text-anchor="middle" font-size="11.5" fill="#322659">Revisar la calidad de datos y los rechazos</text>
+<rect x="8" y="590" width="12" height="12" rx="3" fill="#eefaf0" stroke="#2f855a" stroke-width="1.4"/>
+<text x="25" y="600" font-size="10.5" fill="#334155">Canales (xyz_bank_bff)</text>
+<rect x="166.2" y="590" width="12" height="12" rx="3" fill="#fff4dc" stroke="#b7791f" stroke-width="1.4"/>
+<text x="183.2" y="600" font-size="10.5" fill="#334155">Plataforma (kafka_S8)</text>
+<rect x="318.79999999999995" y="590" width="12" height="12" rx="3" fill="#f3e8ff" stroke="#6b46c1" stroke-width="1.4"/>
+<text x="335.79999999999995" y="600" font-size="10.5" fill="#334155">Batch (xyz_bank_batch)</text>
+<rect x="476.99999999999994" y="590" width="12" height="12" rx="3" fill="#e0f2fe" stroke="#0369a1" stroke-width="1.4"/>
+<text x="493.99999999999994" y="600" font-size="10.5" fill="#334155">Operación</text>
+</svg>
+  <figcaption>Actores y casos de uso de la solución, agrupados por sistema (color)</figcaption>
+</figure>
+<table>
+  <caption>Detalle de los casos de uso</caption>
+  <thead><tr><th style="width:20%">Actor</th><th style="width:34%">Caso de uso</th><th>Cómo se realiza</th></tr></thead>
+  <tbody>
+    <tr><td>Cliente web</td><td>Consultar el detalle de una cuenta con perfil y resumen</td><td><code>GET /api/web/cuentas/{id}</code> en el BFF</td></tr>
+    <tr><td>Cliente de app móvil</td><td>Consultar saldo y últimos movimientos</td><td><code>GET /api/movil/cuentas/{id}</code> en el BFF</td></tr>
+    <tr><td>Cajero automático</td><td>Consultar el saldo</td><td><code>GET /api/cajero/cuentas/{id}/saldo</code> en el BFF</td></tr>
+    <tr><td>Operador de plataforma</td><td>Administrar perfiles de clientes; desplegar y escalar</td><td>CRUD de <code>ms-clientes</code> (red interna); script de despliegue y <code>docker compose --scale</code></td></tr>
+    <tr><td>Cliente de integración</td><td>Obtener token; ejecutar la ingesta; consultar estadísticas, cuentas y rechazos; consultar con resiliencia</td><td><code>/oauth2/token</code>, <code>/api/ingestion/run</code>, <code>/api/stats</code>, <code>/api/accounts</code> y <code>/api/client/**</code> en el gateway</td></tr>
+    <tr><td>Analista de datos</td><td>Ejecutar los procesos batch; revisar la calidad de los datos</td><td><code>docker compose run batch</code> y consultas sobre <code>data_quality_log</code></td></tr>
+  </tbody>
+</table>
+
+<h2 id="componentes-bff">4.6 Componentes del BFF</h2>
+<p>El BFF separa la seguridad, los controladores por canal, los servicios que adaptan la respuesta, el agregador que consulta en paralelo y los clientes REST hacia cada microservicio. Cada capa tiene un color distinto en el diagrama.</p>
+<figure class="alta">
+  <img src="../diagramas/componentes-bff.png" alt="Componentes del BFF">
+  <figcaption>Diagrama de componentes del BFF (MiBff) y sus dependencias</figcaption>
+</figure>
+<h1 id="componentes">5. Componentes desarrollados</h1>
+
+<h2 id="batch">5.1 Migración de procesos batch: xyz_bank_batch</h2>
+<p>El sistema reescribe en Spring Batch 6 los tres procesos del legacy. Un <code>masterJob</code> re-ejecutable limpia las tablas destino y lanza en paralelo tres flujos, uno por archivo de entrada. Cada flujo lee las filas como texto crudo, las valida y normaliza en un procesador y las escribe en PostgreSQL por chunks de 100 registros.</p>
+<figure class="alta" style="--mh:138mm">
+  <img src="../diagramas/batch-masterjob.png" alt="Flujo del masterJob">
+  <figcaption>Estructura del <code>masterJob</code>: tres flujos paralelos de lectura, procesamiento y escritura. Los tres procesadores registran sus rechazos y correcciones en <code>data_quality_log</code></figcaption>
+</figure>
+
+<h3>Validación y calidad de los datos</h3>
+<p>Los lectores entregan cada fila sin convertir; toda conversión y validación ocurre en los procesadores, de modo que cada problema recibe un código de error explícito en lugar de convertirse en silencio (por ejemplo, un monto vacío no se transforma en cero). Un registro inválido se rechaza con todos sus códigos; un registro válido puede recibir correcciones trazadas.</p>
+<table>
+  <caption>Resultado del procesamiento de los tres archivos (1.000 filas cada uno)</caption>
+  <thead><tr><th style="width:17%">Proceso</th><th class="num" style="width:10%">Persistidas</th><th class="num" style="width:10%">Rechazadas</th><th>Principales causas de rechazo y correcciones</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Transacciones diarias</strong></td><td class="num">392</td><td class="num">608</td><td>Tipo inválido (256), monto vacío (162), monto negativo (121), fecha inexistente (49), monto cero (20). Se corrigieron 284 fechas a formato ISO.</td></tr>
+    <tr><td><strong>Intereses</strong></td><td class="num">320</td><td class="num">680</td><td>Saldo vacío (197), tipo de cuenta no elegible (163), edad fuera de rango 18–99 (146), edad vacía (126), titular no identificado (48). Interés: ahorro 0,5 %, préstamo 2 %, hipoteca 3 %.</td></tr>
+    <tr><td><strong>Estados de cuenta anuales</strong></td><td class="num">603</td><td class="num">397</td><td>Monto negativo (232), monto cero (116), monto vacío (48), duplicado (1). Se corrigieron 472 fechas, 106 descripciones vacías y 29 tipos con tilde.</td></tr>
+  </tbody>
+</table>
+<p>Cada una de las 3.000 líneas termina persistida o rechazada, y cada rechazo o corrección queda en la tabla <code>data_quality_log</code> con el paso, la línea, la acción, el código de error y el registro original. El job imprime además un resumen por paso y por código.</p>
+
+<h3>Tolerancia a fallos</h3>
+<table>
+  <caption>Tratamiento de fallos en los pasos del batch</caption>
+  <thead><tr><th style="width:36%">Escenario</th><th>Tratamiento</th></tr></thead>
+  <tbody>
+    <tr><td>Registro que no supera la validación de negocio</td><td><strong>Skip</strong> sin revertir el chunk; queda en la bitácora con su código</td></tr>
+    <tr><td>Línea con columnas faltantes o sobrantes</td><td><strong>Skip</strong> en la lectura (<code>STRUCTURAL_ERROR</code>) con la línea y su contenido</td></tr>
+    <tr><td>Violación de restricción en la base de datos</td><td><strong>Skip</strong> en la escritura (<code>DB_CONSTRAINT_VIOLATION</code>)</td></tr>
+    <tr><td>Bloqueo, deadlock o timeout de PostgreSQL</td><td><strong>Retry</strong> hasta 3 veces con backoff exponencial de 100 ms a 1 s</td></tr>
+    <tr><td>Más rechazos que el límite configurado (1.000 por paso)</td><td>El paso falla: el dato está demasiado dañado para continuar</td></tr>
+    <tr><td>Cualquier otro error (BD caída, archivo inexistente, defecto)</td><td>No se salta: el paso y el job fallan, para no esconder una falla de infraestructura como si fuera un dato malo</td></tr>
+  </tbody>
+</table>
+<p>El esquema de la base actúa como segunda línea de defensa (<code>NOT NULL</code>, <code>CHECK (amount &gt; 0)</code>, tipos permitidos y <code>source_id</code> único). Como el job se puede volver a ejecutar, las tablas se recargan completas en cada corrida: repetirlo produce siempre el mismo resultado.</p>
+
+<h3>Paralelismo y dimensionamiento</h3>
+<p>Los tres flujos corren en paralelo, uno por hilo (<code>flowTaskExecutor</code>), y los chunks de cada paso se ejecutan en un segundo pool (<code>stepTaskExecutor</code>, 3 × 2 = 6 hilos) con 12 conexiones de base de datos (<code>HikariCP</code>). La configuración se eligió midiendo, no por estimación: el costo dominante son las idas y vueltas a PostgreSQL (un commit por chunk), por lo que el tamaño del chunk pesa más que el número de hilos.</p>
+<table>
+  <caption>Mediana del tiempo total del <code>masterJob</code> en milisegundos, según hilos por paso (filas) y tamaño de chunk (columnas)</caption>
+  <thead><tr><th>Conjunto de datos</th><th class="num">Hilos</th><th class="num">chunk 5</th><th class="num">chunk 10</th><th class="num">chunk 50</th><th class="num">chunk 100</th><th class="num">chunk 250</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="4">Oficial: 3.000 registros (5 ejecuciones por celda)</td><td class="num">1</td><td class="num">1.233</td><td class="num">1.059</td><td class="num">887</td><td class="num">778</td><td class="num">793</td></tr>
+    <tr><td class="num">2</td><td class="num">1.218</td><td class="num">1.025</td><td class="num">750</td><td class="num"><strong>738</strong></td><td class="num">775</td></tr>
+    <tr><td class="num">4</td><td class="num">1.120</td><td class="num">943</td><td class="num">767</td><td class="num">730</td><td class="num">724</td></tr>
+    <tr><td class="num">8</td><td class="num">1.148</td><td class="num">950</td><td class="num">813</td><td class="num">733</td><td class="num">736</td></tr>
+    <tr><td rowspan="4">Escalado ×10: 30.000 registros (3 ejecuciones por celda)</td><td class="num">1</td><td class="num">4.157</td><td class="num">3.315</td><td class="num">2.612</td><td class="num">2.529</td><td class="num">2.471</td></tr>
+    <tr><td class="num">2</td><td class="num">4.363</td><td class="num">3.485</td><td class="num">2.476</td><td class="num"><strong>2.481</strong></td><td class="num">2.347</td></tr>
+    <tr><td class="num">4</td><td class="num">4.519</td><td class="num">3.339</td><td class="num">2.632</td><td class="num">2.564</td><td class="num">2.507</td></tr>
+    <tr><td class="num">8</td><td class="num">4.536</td><td class="num">3.399</td><td class="num">2.515</td><td class="num">2.502</td><td class="num">2.421</td></tr>
+  </tbody>
+</table>
+<p>Pasar de chunk 5 a 100 reduce el tiempo cerca de un 40 % en ambos conjuntos, porque baja los commits de 200 a 10 por archivo. Sobre 100 ya no hay mejora apreciable, y más hilos por paso quedan dentro del ruido de medición. Se eligió <strong>chunk 100 con 2 hilos por paso</strong>: unos 35 % más rápido que la configuración inicial (chunk 5: 1.120 ms frente a 738 ms) con el pool más pequeño que captura la mejora. Las mediciones se hicieron en un entorno de 4 vCPU y 15 GB con PostgreSQL 16 local.</p>
+
+<h3>Modelo de datos</h3>
+<table>
+  <caption>Tablas de PostgreSQL (base <code>xyzbank</code>)</caption>
+  <thead><tr><th style="width:24%">Tabla</th><th>Contenido</th></tr></thead>
+  <tbody>
+    <tr><td><code>transaction_report</code></td><td>Transacciones válidas: identificador de origen único, fecha, monto mayor que cero y tipo (<code>DEBITO</code> o <code>CREDITO</code>)</td></tr>
+    <tr><td><code>account</code></td><td>Cuentas elegibles con titular, saldo con interés, interés, edad y tipo (<code>AHORRO</code>, <code>PRESTAMO</code>, <code>HIPOTECA</code>)</td></tr>
+    <tr><td><code>annual_statement</code></td><td>Movimientos anuales válidos y normalizados</td></tr>
+    <tr><td><code>data_quality_log</code></td><td>Cada rechazo y cada corrección, con paso, línea, acción, código, detalle y registro original</td></tr>
+  </tbody>
+</table>
+
+<h2 id="bff">5.2 BFF y microservicios de dominio: xyz_bank_bff</h2>
+<p>El repositorio contiene el BFF (<code>MiBff</code>) y tres microservicios de dominio independientes. Cada microservicio es un proyecto Spring Boot con su propia base H2 en memoria, que se carga desde un archivo CSV al arrancar.</p>
+<table>
+  <caption>Módulos de xyz_bank_bff</caption>
+  <thead><tr><th style="width:16%">Módulo</th><th style="width:8%">Puerto</th><th style="width:26%">Responsabilidad</th><th>Endpoints</th></tr></thead>
+  <tbody>
+    <tr><td><strong>MiBff</strong></td><td>8443 (HTTPS)</td><td>Punto de entrada por canal; agrega y adapta las respuestas</td><td><code>GET /api/web/cuentas/{id}</code>, <code>GET /api/movil/cuentas/{id}</code>, <code>GET /api/cajero/cuentas/{id}/saldo</code></td></tr>
+    <tr><td><strong>ms-cuentas</strong></td><td>8081</td><td>Gestión de cuentas (1.000 cuentas cargadas desde CSV)</td><td><code>GET /cuentas</code>, <code>GET /cuentas/{id}</code></td></tr>
+    <tr><td><strong>ms-transacciones</strong></td><td>8094</td><td>Movimientos por cuenta (1.000 registros cargados desde CSV)</td><td><code>GET /transacciones/cuenta/{id}</code></td></tr>
+    <tr><td><strong>ms-clientes</strong></td><td>8082</td><td>Administración de perfiles de clientes (10 clientes cargados)</td><td><code>GET /clientes</code>, <code>GET /clientes/{id}</code>, <code>GET /clientes/buscar?nombre=</code>, <code>POST</code>, <code>PUT /clientes/{id}</code>, <code>DELETE /clientes/{id}</code></td></tr>
+  </tbody>
+</table>
+
+<h3>Una respuesta distinta por canal</h3>
+<table>
+  <caption>Contenido de la respuesta de cada canal para una cuenta</caption>
+  <thead><tr><th style="width:13%">Canal</th><th style="width:18%">Rol requerido</th><th>Respuesta</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Web</strong></td><td><code>WEB</code></td><td>Cuenta completa, perfil del cliente (RUT, correo, teléfono, dirección, fecha de nacimiento), lista íntegra de movimientos y un resumen calculado de ingresos, egresos y saldo neto. Para la cuenta 101: 46 movimientos.</td></tr>
+    <tr><td><strong>Móvil</strong></td><td><code>MOVIL</code></td><td>Titular, saldo y únicamente los últimos 5 movimientos, para reducir el consumo de datos</td></tr>
+    <tr><td><strong>Cajero</strong></td><td><code>CAJERO</code></td><td>Saldo y titular enmascarado (por ejemplo, «Charlie G.»), sin datos de contacto; no consulta el historial de transacciones</td></tr>
+  </tbody>
+</table>
+
+<h3>Agregación concurrente y degradación controlada</h3>
+<p>El <code>AgregadorService</code> consulta a los microservicios con <code>CompletableFuture</code> sobre un pool fijo de 10 hilos: la cuenta y las transacciones se piden en paralelo, y el cliente se busca en <code>ms-clientes</code> en cuanto se conoce el titular de la cuenta. Los clientes REST (<code>RestClient</code>) tienen timeouts de 5 s para conectar y 10 s para leer. Si <code>ms-clientes</code> falla o el titular no existe (por ejemplo, las cuentas con titular «Unknown»), el canal responde igual con el cliente en <code>null</code> y registra una advertencia, en lugar de fallar toda la consulta.</p>
+<h3>Seguridad del BFF</h3>
+<p>El BFF exige HTTPS (certificado PKCS12) y HTTP Basic con tres usuarios, uno por canal. Cada prefijo de ruta (<code>/api/web</code>, <code>/api/movil</code>, <code>/api/cajero</code>) exige su rol: sin credenciales responde 401 y con el usuario de otro canal responde 403. Los tres microservicios no tienen autenticación propia, por lo que no se publican fuera de la red interna.</p>
+
+<h2 id="plataforma">5.3 Plataforma Spring Cloud y mensajería: kafka_S8</h2>
+<p>Ecosistema de microservicios que migra los CSV legados a PostgreSQL a través de Apache Kafka, con configuración centralizada, descubrimiento de servicios, seguridad OAuth2 y resiliencia.</p>
+<table>
+  <caption>Servicios de kafka_S8</caption>
+  <thead><tr><th style="width:21%">Servicio</th><th style="width:8%">Puerto</th><th>Rol</th></tr></thead>
+  <tbody>
+    <tr><td><strong>config-server</strong></td><td>8888</td><td>Spring Cloud Config: sirve la configuración de todos los servicios desde <code>config-repo/</code></td></tr>
+    <tr><td><strong>discovery-server</strong></td><td>8761</td><td>Eureka: registro y descubrimiento dinámico de servicios</td></tr>
+    <tr><td><strong>auth-server</strong></td><td>9000</td><td>Spring Authorization Server: emite JWT firmados con RSA mediante Client Credentials</td></tr>
+    <tr><td><strong>api-gateway</strong></td><td>8080 (80 en EC2)</td><td>Entrada única: valida el JWT (Resource Server reactivo) y enruta con <code>lb://</code> vía Eureka</td></tr>
+    <tr><td><strong>data-ingestion-service</strong></td><td>8081 interno</td><td>Lee los CSV, valida y normaliza cada fila, y la publica en Kafka; las filas inválidas van a un tópico de rechazados con sus motivos</td></tr>
+    <tr><td><strong>data-processor-service</strong></td><td>8082 interno</td><td>Consume los tópicos, persiste en PostgreSQL con upsert idempotente, calcula intereses y expone consultas</td></tr>
+    <tr><td><strong>resilient-client</strong></td><td>8083 (solo 127.0.0.1)</td><td>Consumidor síncrono del procesador, protegido con Resilience4j</td></tr>
+    <tr><td><strong>Kafka y PostgreSQL</strong></td><td>9092 y 5432 internos</td><td>Apache Kafka 3.9 en modo KRaft (sin ZooKeeper) y PostgreSQL 16</td></tr>
+  </tbody>
+</table>
+
+<h3>Seguridad OAuth2</h3>
+<p>El <code>auth-server</code> entrega tokens con el flujo Client Credentials. Existen dos clientes: <code>banking-client</code> (scopes <code>data.read</code> e <code>ingestion.write</code>) para consumidores externos, y <code>resilient-client</code> (scope <code>data.read</code>) como identidad de servicio. El gateway rechaza con 401 cualquier <code>/api/**</code> sin un JWT válido, y cada servicio vuelve a validar el token y aplica sus scopes: <code>POST /api/ingestion/**</code> exige <code>ingestion.write</code> y las lecturas exigen <code>data.read</code> (403 si falta). Las claves públicas se publican en <code>/oauth2/jwks</code>.</p>
+
+<h3>Mensajería con Kafka</h3>
+<table>
+  <caption>Tópicos de Kafka</caption>
+  <thead><tr><th style="width:28%">Tópico</th><th style="width:10%" class="num">Particiones</th><th>Contenido</th></tr></thead>
+  <tbody>
+    <tr><td><code>interests-validated</code></td><td class="num">3</td><td>Filas válidas de <code>intereses.csv</code></td></tr>
+    <tr><td><code>transactions-validated</code></td><td class="num">3</td><td>Filas válidas de <code>transacciones.csv</code></td></tr>
+    <tr><td><code>annual-accounts-validated</code></td><td class="num">3</td><td>Filas válidas de <code>cuentas_anuales.csv</code></td></tr>
+    <tr><td><code>ingestion-rejected</code></td><td class="num">1</td><td>Filas inválidas con la lista de motivos, para auditoría</td></tr>
+    <tr><td><code>&lt;tópico&gt;.DLT</code></td><td class="num">automático</td><td>Mensajes que el consumidor no pudo procesar tras 3 reintentos</td></tr>
+  </tbody>
+</table>
+<p>La clave de cada mensaje es <code>archivo:línea</code>, que también es la clave primaria en PostgreSQL: volver a ejecutar la ingesta, o recibir un mensaje repetido, actualiza la fila en lugar de duplicarla. El productor usa <code>acks=all</code> con idempotencia, y el consumidor reintenta tres veces con una pausa de un segundo antes de enviar el mensaje a la DLT. Con los datos actuales, la ingesta acepta 1.552 filas y rechaza 1.448 (465, 401 y 686 aceptadas en intereses, transacciones y cuentas anuales).</p>
+
+<h3>Resiliencia con Resilience4j</h3>
+<table>
+  <caption>Configuración de resiliencia del <code>resilient-client</code></caption>
+  <thead><tr><th style="width:20%">Patrón</th><th>Configuración</th></tr></thead>
+  <tbody>
+    <tr><td>Circuit Breaker</td><td>Ventana de 10 llamadas, mínimo 4; abre con 50 % o más de fallos o 80 % o más de llamadas lentas (más de 2 s); 15 s en <code>OPEN</code> y 2 llamadas de prueba en <code>HALF_OPEN</code></td></tr>
+    <tr><td>Retry</td><td>3 intentos con backoff exponencial (500 ms, 1 s); el circuit breaker envuelve al retry, así que una secuencia agotada cuenta como un solo fallo</td></tr>
+    <tr><td>Rate Limiter</td><td>20 peticiones por segundo por instancia; el exceso recibe 429</td></tr>
+    <tr><td>Timeouts</td><td>Conexión 2 s, lectura 3 s</td></tr>
+    <tr><td>Respuesta alternativa</td><td>Devuelve la última respuesta buena (<code>source: "cache"</code>) o un contenido vacío (<code>source: "default"</code>); los errores 4xx del procesador se propagan</td></tr>
+  </tbody>
+</table>
+
+<h1 id="integracion" class="sin-salto">6. Integración entre componentes</h1>
+<p>Los tres repositorios forman un ecosistema pero se integran de dos formas distintas: dentro de cada sistema los componentes se comunican por red en tiempo de ejecución, y entre los sistemas la integración es conceptual y documental (misma arquitectura, mismos datos de origen, un solo despliegue).</p>
+<table>
+  <caption>Interacciones entre componentes</caption>
+  <thead><tr><th style="width:34%">Interacción</th><th>Mecanismo</th><th style="width:12%">Estado</th></tr></thead>
+  <tbody>
+    <tr><td>MiBff → ms-cuentas, ms-transacciones, ms-clientes</td><td>REST síncrono con <code>RestClient</code>; llamadas en paralelo; timeouts 5 s y 10 s</td><td>Operativo</td></tr>
+    <tr><td>MiBff → ms-clientes ante una falla</td><td>El canal responde igual con el cliente en <code>null</code></td><td>Operativo</td></tr>
+    <tr><td>Gateway → servicios de kafka_S8</td><td><code>lb://</code> con Eureka; JWT validado en el gateway y en cada servicio</td><td>Operativo</td></tr>
+    <tr><td>data-ingestion → Kafka → data-processor</td><td>Tópicos <code>*-validated</code>, <code>ingestion-rejected</code> y <code>.DLT</code>; productor idempotente; consumidor con reintentos</td><td>Operativo</td></tr>
+    <tr><td>resilient-client → data-processor</td><td>Circuit Breaker, Retry y Rate Limiter con respuesta alternativa</td><td>Operativo</td></tr>
+    <tr><td>xyz_bank_batch → PostgreSQL</td><td>Jobs con chunks, skip y retry</td><td>Operativo</td></tr>
+    <tr><td>MiBff ↔ plataforma de kafka_S8 (OAuth2, Eureka, Config)</td><td>—</td><td>Pendiente</td></tr>
+    <tr><td>ms-transacciones → Kafka (evento de transacción completada)</td><td>—</td><td>Pendiente</td></tr>
+  </tbody>
+</table>
+<div class="nota"><p><strong>Alcance de la integración.</strong> Cada sistema lee sus propios datos: el BFF devuelve lo que cargan sus microservicios al arrancar, <code>kafka_S8</code> usa su propio PostgreSQL y el batch deja sus resultados en su propia base. Conectarlos en tiempo de ejecución (por ejemplo, que el BFF valide los JWT del <code>auth-server</code>) es la evolución prevista en la sección 11.</p></div>
+
+<h2 id="flujo-bff">6.1 Flujo de una consulta en el canal web</h2>
+<figure class="media">
+  <img src="../diagramas/secuencia-bff.png" alt="Secuencia de una consulta web">
+  <figcaption>Secuencia de <code>GET /api/web/cuentas/101</code>: consultas en paralelo y degradación controlada</figcaption>
+</figure>
+
+<h2 id="flujo-ingesta">6.2 Flujo de la ingesta de eventos</h2>
+<figure class="media">
+  <img src="../diagramas/secuencia-ingesta.png" alt="Secuencia de la ingesta">
+  <figcaption>Secuencia de la ingesta: token OAuth2, validación, publicación en Kafka y persistencia idempotente</figcaption>
+</figure>
+<h1 id="seguridad" class="sin-salto">7. Seguridad y resiliencia</h1>
+<p>Esta sección resume de forma transversal cómo cada sistema cubre los requerimientos RN3 (seguridad) y RN4 (tolerancia a fallos).</p>
+<table>
+  <caption>Seguridad por componente</caption>
+  <thead><tr><th style="width:24%">Componente</th><th>Autenticación y autorización</th><th style="width:24%">Transporte</th></tr></thead>
+  <tbody>
+    <tr><td><strong>MiBff</strong></td><td>HTTP Basic con un usuario por canal; cada prefijo de ruta exige su rol (<code>WEB</code>, <code>MOVIL</code>, <code>CAJERO</code>)</td><td>HTTPS (:8443) con keystore PKCS12</td></tr>
+    <tr><td><strong>ms-cuentas, ms-transacciones, ms-clientes</strong></td><td>Sin autenticación propia; accesibles solo desde el BFF dentro de la red de Docker</td><td>HTTP, red interna</td></tr>
+    <tr><td><strong>api-gateway y servicios de kafka_S8</strong></td><td>JWT OAuth2 (Client Credentials, RSA), validado en el gateway y de nuevo en cada servicio, con scopes <code>data.read</code> e <code>ingestion.write</code></td><td>HTTP :80 (TLS con un proxy o balanceador delante)</td></tr>
+    <tr><td><strong>xyz_bank_batch</strong></td><td>No expone endpoints; accede a PostgreSQL con credenciales</td><td>Red interna de Docker</td></tr>
+    <tr><td><strong>Instancia EC2</strong></td><td>Security Group con entrada solo en 22, 80 y 8443, limitada a la IP del operador</td><td>—</td></tr>
+  </tbody>
+</table>
+<table>
+  <caption>Mecanismos de resiliencia</caption>
+  <thead><tr><th style="width:24%">Capa</th><th>Mecanismo</th></tr></thead>
+  <tbody>
+    <tr><td><strong>BFF</strong></td><td>Timeouts de conexión y lectura; llamadas concurrentes; el cliente es opcional y su falla no rompe la respuesta</td></tr>
+    <tr><td><strong>Cliente resiliente</strong></td><td>Circuit Breaker, Retry con backoff, Rate Limiter y respuesta alternativa con la última respuesta buena</td></tr>
+    <tr><td><strong>Kafka</strong></td><td>Productor idempotente con <code>acks=all</code>, consumidor con 3 reintentos y cola de mensajes fallidos (<code>.DLT</code>); escritura idempotente por clave <code>archivo:línea</code></td></tr>
+    <tr><td><strong>Batch</strong></td><td>Skip de datos inválidos, retry de errores transitorios de base de datos y falla explícita ante errores de infraestructura</td></tr>
+    <tr><td><strong>Contenedores</strong></td><td>Healthchecks y <code>depends_on</code> con condición de salud; reinicio automático; límite de memoria por contenedor</td></tr>
+  </tbody>
+</table>
+
+<h1 id="despliegue">8. Despliegue en la nube</h1>
+<h2 id="contenedores">8.1 Contenerización con Docker</h2>
+<p>Cada uno de los 12 servicios con código propio tiene su Dockerfile multietapa: una etapa de construcción con Maven y JDK 21 (<code>maven:3.9-eclipse-temurin-21</code>) y una etapa de ejecución con solo el JRE 21 (<code>eclipse-temurin:21-jre-alpine</code>), con usuario sin privilegios, un <code>HEALTHCHECK</code> en los servicios web y un límite de memoria del 75 % del contenedor para la JVM. Las imágenes se compilan dentro de Docker, por lo que no hace falta instalar Java ni Maven en el servidor.</p>
+<p>Cada repositorio tiene su <code>docker-compose.yaml</code>: <code>kafka_S8</code> levanta 9 contenedores, <code>xyz_bank_bff</code> 4, y <code>xyz_bank_batch</code> su PostgreSQL más un job que se ejecuta bajo demanda. Cada contenedor de Spring Boot tiene un límite de 512 MiB. Solo se publican hacia el exterior el API Gateway (puerto 80) y el BFF (puerto 8443); el resto de los servicios, Kafka y las bases de datos viven en redes internas.</p>
+
+<h2 id="ec2">8.2 Instancia EC2 y Security Group</h2>
+<table>
+  <caption>Configuración de la instancia</caption>
+  <thead><tr><th style="width:26%">Parámetro</th><th>Valor</th></tr></thead>
+  <tbody>
+    <tr><td>AMI</td><td>Amazon Linux 2023, arquitectura x86_64</td></tr>
+    <tr><td>Tipo de instancia</td><td><code>t3.xlarge</code>: 4 vCPU y 16 GiB de memoria</td></tr>
+    <tr><td>Almacenamiento</td><td>30 GiB gp3 (las imágenes y la caché de build ocupan unos 12 GB)</td></tr>
+    <tr><td>Red</td><td>VPC por defecto, subred pública, IP pública (Elastic IP opcional)</td></tr>
+    <tr><td>Security Group, entrada</td><td>22/tcp (SSH), 80/tcp (API Gateway de <code>kafka_S8</code>) y 8443/tcp (<code>MiBff</code> por HTTPS), todos con origen limitado a la IP del operador</td></tr>
+    <tr><td>Security Group, salida</td><td>Todo permitido (descarga de paquetes, imágenes y dependencias)</td></tr>
+  </tbody>
+</table>
+<p>No se abre ningún otro puerto: los microservicios sin autenticación propia, Config Server, Eureka, Kafka y las bases de datos solo son accesibles dentro de la red de Docker o por túnel SSH.</p>
+<figure class="alta">
+  <img src="../diagramas/despliegue-ec2.png" alt="Despliegue en EC2">
+  <figcaption>Topología de despliegue en una sola instancia EC2: tres stacks de Docker, un Security Group y tres puertos de entrada</figcaption>
+</figure>
+
+<h2 id="script">8.3 Script de despliegue</h2>
+<p>El script <code>deploy/ec2-setup.sh</code> automatiza todo el despliegue y sirve tanto como <em>User data</em> al crear la instancia como por SSH. Realiza, en este orden:</p>
+<ol>
+  <li>Instala Docker, Git, Compose v2 y buildx (si faltan) y crea un archivo de swap de 2 GiB como red de seguridad.</li>
+  <li>Clona los tres repositorios en <code>/opt/xyz-bank</code>, o los actualiza si ya existen.</li>
+  <li>Levanta <code>kafka_S8</code> con el gateway publicado en el puerto 80, y espera a que todos los servicios estén sanos.</li>
+  <li>Levanta <code>xyz_bank_bff</code>; el BFF espera a que sus tres microservicios estén sanos.</li>
+  <li>Levanta el PostgreSQL de <code>xyz_bank_batch</code> y ejecuta una vez el <code>masterJob</code>.</li>
+  <li>Ejecuta tres pruebas de humo y termina con código distinto de cero si alguna falla.</li>
+</ol>
+<p>No hay dependencias entre los tres sistemas; el orden distribuye la espera. Es seguro volver a ejecutar el script: actualiza el código, reconstruye las imágenes y repite las pruebas. Variables como <code>STACKS</code>, <code>BRANCH</code>, <code>RUN_BATCH</code> y <code>SWAP_MB</code> permiten desplegar solo una parte o ajustar el comportamiento.</p>
+
+<h2 id="mediciones">8.4 Mediciones del despliegue</h2>
+<p>El script se ejecutó completo, desde cero, en un entorno con las mismas características que la instancia (4 vCPU y 16 GiB), con los repositorios clonados desde GitHub.</p>
+<table>
+  <caption>Resultados de la ejecución del despliegue completo</caption>
+  <thead><tr><th style="width:44%">Medición</th><th>Resultado</th></tr></thead>
+  <tbody>
+    <tr><td>Pruebas de humo (gateway con token OAuth2, tres canales del BFF, datos del batch)</td><td>Las tres aprobadas</td></tr>
+    <tr><td>Contenedores</td><td>14 en total, todos <code>healthy</code></td></tr>
+    <tr><td>Memoria de los contenedores en reposo</td><td>≈ 2,9 GiB (cada servicio Spring Boot entre 140 y 340 MiB; Kafka ≈ 470 MiB)</td></tr>
+    <tr><td>Memoria usada en el equipo completo en reposo</td><td>≈ 3,7 GiB</td></tr>
+    <tr><td>Pico de memoria durante los builds de los 12 servicios</td><td>≈ 3,9 GiB (muestreo cada 2 s)</td></tr>
+    <tr><td>Disco de Docker</td><td>≈ 7,4 GB de imágenes y ≈ 4,8 GB de caché de build</td></tr>
+    <tr><td>Duración del despliegue en frío (sin imágenes ni caché)</td><td>≈ 11 minutos</td></tr>
+    <tr><td>Segunda ejecución del script sobre los repositorios ya clonados</td><td>Actualiza, reconstruye y vuelve a aprobar las tres pruebas</td></tr>
+  </tbody>
+</table>
+<div class="nota"><p><strong>Alcance de las mediciones.</strong> Se midieron en un servidor con las mismas características que la instancia recomendada, no en una instancia EC2 real. La duración depende de la red y del almacenamiento. La estimación inicial de memoria, calculada a partir de los límites de los contenedores, fue de 8 a 9 GiB; al medir, el pico real fue menos de la mitad. Con esas cifras una <code>t3.large</code> (8 GiB) también cubriría la memoria, aunque no se probó con 2 vCPU.</p></div>
+
+<h2 id="escalado">8.5 Escalabilidad horizontal</h2>
+<p>Los servicios de <code>kafka_S8</code> se registran en Eureka y el gateway los balancea con <code>lb://</code>, por lo que se pueden replicar sin cambios de código. Se comprobó con <code>docker compose up -d --scale data-processor-service=2</code>: Eureka registró las dos instancias en estado <code>UP</code>, y al volver a una sola réplica la segunda se retiró del registro. El BFF consulta a sus microservicios por URL fija, así que replicarlos requeriría registrarlos primero en Eureka (sección 11).</p>
+
+<h1 id="pruebas">9. Pruebas y resultados</h1>
+<h2 id="automaticas">9.1 Pruebas automatizadas</h2>
+<table>
+  <caption>Pruebas automatizadas incluidas en los repositorios</caption>
+  <thead><tr><th style="width:22%">Repositorio</th><th>Pruebas</th></tr></thead>
+  <tbody>
+    <tr><td><code>xyz_bank_batch</code></td><td>Pruebas unitarias de los tres procesadores (<code>TransactionProcessorTest</code>, <code>InterestProcessorTest</code>, <code>StatementProcessorTest</code>) y de la política de skip; pruebas de integración del job completo (<code>MasterJobIntegrationTests</code>) y de tolerancia a fallos (<code>FaultToleranceIntegrationTests</code>), que requieren PostgreSQL</td></tr>
+    <tr><td><code>kafka_S8</code></td><td>Pruebas de las reglas de validación (<code>RecordValidatorTest</code>) y del limitador de tasa (<code>RateLimiterTests</code>), más las pruebas de arranque de cada servicio</td></tr>
+    <tr><td><code>xyz_bank_bff</code></td><td>Solo la prueba de arranque del contexto de cada módulo; la verificación funcional se hizo con pruebas manuales (sección 9.2)</td></tr>
+  </tbody>
+</table>
+
+<h2 id="funcionales">9.2 Pruebas funcionales del despliegue</h2>
+<p>Se ejecutaron contra el despliegue completo: el batch por consola y los demás sistemas con peticiones HTTP, tal como se documenta en el archivo <code>instrucciones.md</code> de la entrega.</p>
+<table>
+  <caption>Resultados de las pruebas funcionales</caption>
+  <thead><tr><th style="width:12%">Sistema</th><th style="width:40%">Prueba</th><th>Resultado obtenido</th></tr></thead>
+  <tbody>
+    <tr><td>Batch</td><td>Ejecución del <code>masterJob</code>, y una segunda ejecución</td><td>Código de salida 0; 392 transacciones, 320 cuentas y 603 estados persistidos, y 2.576 registros en la bitácora; la segunda ejecución deja las mismas cantidades</td></tr>
+    <tr><td>BFF</td><td>Canal web, cuenta 101</td><td>200: perfil de Charlie Green, 46 movimientos y resumen de ingresos y egresos</td></tr>
+    <tr><td>BFF</td><td>Canal móvil, cuenta 101</td><td>200: titular, saldo y 5 movimientos</td></tr>
+    <tr><td>BFF</td><td>Canal cajero, cuentas 101, 102, 103, 105, 106 y 107</td><td>200: titular enmascarado y saldo propios de cada cuenta («Charlie G.», «Alice B.», «Bob J.», «Steve R.», «John D.», «Diana P.»)</td></tr>
+    <tr><td>BFF</td><td>Cuenta 129 (titular «Unknown»)</td><td>200 con <code>cliente: null</code>: degradación controlada</td></tr>
+    <tr><td>BFF</td><td>Sin credenciales; usuario de otro canal</td><td>401; 403</td></tr>
+    <tr><td>BFF</td><td>Cuenta inexistente</td><td>500 (<code>ms-cuentas</code> no traduce el error a 404; ver sección 11)</td></tr>
+    <tr><td>kafka_S8</td><td>Token OAuth2; <code>/api/stats</code> sin token; con secreto incorrecto</td><td>200 con JWT (30 min de vigencia); 401; 401</td></tr>
+    <tr><td>kafka_S8</td><td>Ingesta por el gateway</td><td>200: 1.552 filas aceptadas y 1.448 rechazadas; las estadísticas pasan de cero a los conteos finales</td></tr>
+    <tr><td>kafka_S8</td><td>Token de solo lectura en la ingesta; segunda ingesta</td><td>403; mismos conteos que la primera (idempotencia)</td></tr>
+    <tr><td>kafka_S8</td><td>Procesador detenido durante consultas del cliente resiliente</td><td>Responde con <code>source: "cache"</code>; el circuit breaker recorre CLOSED, OPEN, HALF_OPEN y vuelve a CLOSED</td></tr>
+    <tr><td>kafka_S8</td><td>Kafka y escalado</td><td>4 tópicos de negocio con el consumidor sin retraso; 2 instancias del procesador registradas en Eureka</td></tr>
+  </tbody>
+</table>
+
+<h2 id="legacy">9.3 Comparación con el sistema legacy</h2>
+<table>
+  <caption>Sistema legacy frente a la solución actual</caption>
+  <thead><tr><th style="width:18%">Aspecto</th><th style="width:30%">Sistema legacy</th><th>Solución actual</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Procesos batch</strong></td><td>Programas COBOL y scripts Shell en mainframe</td><td>Spring Batch 6 con tres jobs paralelos, chunks de 100, skip y retry; re-ejecutable y con bitácora de rechazos</td></tr>
+    <tr><td><strong>Rendimiento batch</strong></td><td>Sin mediciones disponibles</td><td>3.000 registros en una mediana de 738 ms; 30.000 en 2.481 ms; ≈ 35 % más rápido que la configuración inicial</td></tr>
+    <tr><td><strong>Arquitectura</strong></td><td>Monolito</td><td>Microservicios independientes, cada uno con su base y su despliegue</td></tr>
+    <tr><td><strong>Respuesta a los canales</strong></td><td>Los mismos datos para todos</td><td>Web con perfil, movimientos y resumen; móvil con titular y 5 movimientos; cajero con saldo y titular enmascarado</td></tr>
+    <tr><td><strong>Seguridad</strong></td><td>Centralizada y limitada</td><td>JWT OAuth2 con scopes en la plataforma; HTTPS y roles por canal en el BFF; servicios internos aislados por red</td></tr>
+    <tr><td><strong>Tolerancia a fallos</strong></td><td>Un módulo caído afecta a todo el sistema</td><td>Circuit breaker, reintentos, rate limiter, DLT y degradación controlada en el BFF</td></tr>
+    <tr><td><strong>Calidad de datos</strong></td><td>Sin trazabilidad de rechazos</td><td>Cada fila rechazada o corregida queda registrada con todos sus motivos</td></tr>
+    <tr><td><strong>Despliegue</strong></td><td>Servidores mainframe</td><td>Contenedores Docker; los tres sistemas en una instancia EC2 con un solo script</td></tr>
+  </tbody>
+</table>
+<p>No se dispone de mediciones del sistema legacy, por lo que la comparación es cualitativa salvo en las cifras que provienen de los propios repositorios. Las cifras de calidad de datos de <code>xyz_bank_batch</code> (1.315 persistidas y 1.685 rechazadas de 3.000) y de <code>kafka_S8</code> (1.552 aceptadas y 1.448 rechazadas de 3.000) difieren porque cada repositorio aplica reglas propias; por ejemplo, el rango de edad aceptado es 18 a 99 en el batch y 18 a 120 en la plataforma.</p>
+
+<h1 id="desafios">10. Desafíos y soluciones</h1>
+<table>
+  <caption>Principales obstáculos del proyecto y cómo se resolvieron</caption>
+  <thead><tr><th style="width:28%">Desafío</th><th style="width:34%">Causa</th><th>Solución</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Datos legados con errores</strong></td><td>Montos vacíos o negativos, fechas en cuatro formatos, tipos desconocidos, edades fuera de rango y duplicados</td><td>Validación explícita con un código por tipo de error, normalización de fechas y tipos, y bitácora de calidad con el registro original</td></tr>
+    <tr><td><strong>Rendimiento del batch</strong></td><td>La configuración inicial usaba un pool compartido y chunks de 5 registros, con un commit por cada 5 filas</td><td>Dos pools separados, chunk de 100 y 12 conexiones, elegidos tras un benchmark con dos tamaños de datos</td></tr>
+    <tr><td><strong>Servicios sin registrar en Spring</strong></td><td>Los controladores, repositorios y la configuración estaban fuera del paquete base de la aplicación, que Spring Boot no escaneaba</td><td><code>@ComponentScan</code>, <code>@EntityScan</code> y <code>@EnableJpaRepositories</code> explícitos; en Spring Boot 4, <code>@EntityScan</code> vive en un paquete nuevo</td></tr>
+    <tr><td><strong>Microservicios bloqueados con 401</strong></td><td>Spring Security activo sin configuración propia exigía una contraseña generada al azar</td><td>Configuración con acceso abierto en los microservicios internos, que quedan aislados por la red de Docker y el Security Group</td></tr>
+    <tr><td><strong>Error al deserializar las respuestas</strong></td><td>Los clientes REST devolvían listas sin tipo y Jackson las convertía en mapas (<code>ClassCastException</code>)</td><td>Tipos genéricos explícitos en los clientes y en el agregador</td></tr>
+    <tr><td><strong>El BFF no arrancaba con TLS</strong></td><td>El keystore estaba guardado como un directorio y no como un archivo</td><td>Se corrigió su ubicación en los recursos del proyecto</td></tr>
+    <tr><td><strong>Timeouts en el arranque en frío</strong></td><td>Con 3 s de lectura, la primera consulta tras arrancar los servicios podía fallar</td><td>Timeouts del BFF de 5 s y 10 s</td></tr>
+    <tr><td><strong>Vínculo entre cuenta y cliente</strong></td><td><code>ms-cuentas</code> no guarda el identificador del cliente, solo el nombre del titular</td><td>Búsqueda por nombre en <code>ms-clientes</code> con degradación a <code>null</code> si no hay coincidencia; mejora planteada en la sección 11</td></tr>
+    <tr><td><strong>Dimensionar la instancia</strong></td><td>La estimación a partir de los límites de memoria sobrestimó el consumo real</td><td>Medir el despliegue completo antes de decidir el tamaño y la configuración de disco</td></tr>
+    <tr><td><strong>Desplegar de forma reproducible</strong></td><td>Tres sistemas con distintas pilas, y un buildx antiguo en la AMI que impide <code>docker compose build</code></td><td>Dockerfile y Compose por sistema, y un script que instala buildx, levanta todo en orden y comprueba el resultado</td></tr>
+  </tbody>
+</table>
+
+<h1 id="mejoras" class="sin-salto">11. Propuestas de mejora y próximos pasos</h1>
+<table>
+  <caption>Mejoras propuestas, por prioridad</caption>
+  <thead><tr><th style="width:4%">N°</th><th style="width:27%">Mejora</th><th>Qué aporta</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><strong>BFF como Resource Server OAuth2</strong></td><td>Reemplaza el HTTP Basic con usuarios en memoria por los JWT del <code>auth-server</code>, con una sola identidad para toda la solución</td></tr>
+    <tr><td>2</td><td><strong>Pagos y eventos en <code>ms-transacciones</code></strong></td><td>Hoy solo consulta movimientos; registrar pagos, transferencias y depósitos, y publicar «transacción completada» en Kafka, conecta el BFF con la plataforma</td></tr>
+    <tr><td>3</td><td><strong>Clave de cliente en la cuenta</strong></td><td>Reemplaza la búsqueda por nombre (frágil si dos clientes se llaman igual) por un identificador de cliente en <code>ms-cuentas</code></td></tr>
+    <tr><td>4</td><td><strong>Eureka y Config Server en el BFF</strong></td><td>Elimina las URL fijas y habilita el balanceo y el escalado horizontal de los microservicios del BFF</td></tr>
+    <tr><td>5</td><td><strong>Errores HTTP coherentes</strong></td><td>Responder 404 cuando no existe una cuenta o un cliente, en lugar del 500 actual</td></tr>
+    <tr><td>6</td><td><strong>Un solo pipeline de datos</strong></td><td>El batch y la ingesta Kafka procesan los mismos tipos de archivo con reglas distintas; unificar criterios de validación y destino</td></tr>
+    <tr><td>7</td><td><strong>Pruebas automatizadas del BFF y de los microservicios</strong></td><td>Hoy solo existe la prueba de arranque; cubrir la agregación, la degradación y la seguridad por canal</td></tr>
+    <tr><td>8</td><td><strong>Secretos y TLS</strong></td><td>Sacar las credenciales del código (variables de entorno o un gestor de secretos) y terminar TLS en el gateway con un balanceador</td></tr>
+    <tr><td>9</td><td><strong>Observabilidad e integración continua</strong></td><td>Métricas y logs centralizados, y un pipeline que construya las imágenes y ejecute las pruebas en cada cambio</td></tr>
+  </tbody>
+</table>
+
+<h1 id="conclusiones">12. Conclusiones</h1>
+<p>La solución migra los tres frentes del sistema legacy a una arquitectura moderna y verificable: los procesos batch se reescribieron con paralelismo, tolerancia a fallos y trazabilidad de datos; el patrón BFF entrega a cada canal la respuesta que necesita, con su propio control de acceso; y la plataforma de microservicios incorpora configuración centralizada, descubrimiento, seguridad OAuth2, resiliencia y mensajería asíncrona. Todo se despliega con contenedores en una sola instancia EC2 mediante un script que además comprueba el resultado.</p>
+<p>Las decisiones se sostienen en mediciones propias del proyecto: el benchmark del batch, el consumo real de memoria del despliegue y las pruebas funcionales de cada sistema. También quedan explícitos los límites actuales: los tres sistemas están desacoplados en tiempo de ejecución, el BFF aún no usa la seguridad OAuth2 de la plataforma, y <code>ms-transacciones</code> es de consulta. Esos puntos son el camino de evolución natural y están priorizados en la sección anterior.</p>
+
+<h1 id="anexo" class="sin-salto">Anexo A. Repositorios y puertos</h1>
+<table>
+  <caption>Repositorios de la solución</caption>
+  <thead><tr><th style="width:22%">Repositorio</th><th style="width:34%">Dirección</th><th>Contenido</th></tr></thead>
+  <tbody>
+    <tr><td><code>xyz_bank_batch</code></td><td>github.com/CarlosJRF/xyz_bank_batch</td><td>Aplicación Spring Batch (<code>xyz_bank/</code>), benchmark, <code>Dockerfile</code> y <code>docker-compose.yaml</code></td></tr>
+    <tr><td><code>xyz_bank_bff</code></td><td>github.com/CarlosJRF/xyz_bank_bff</td><td><code>MiBff</code>, <code>ms-cuentas</code>, <code>ms-transacciones</code>, <code>ms-clientes</code>, <code>deploy/ec2-setup.sh</code>, y la carpeta <code>entrega/</code> con la documentación</td></tr>
+    <tr><td><code>kafka_S8</code></td><td>github.com/CarlosJRF/kafka_S8</td><td>Siete servicios Spring Cloud, <code>config-repo/</code>, <code>docker-compose.yaml</code>, scripts de demostración y evidencias</td></tr>
+  </tbody>
+</table>
+<table style="break-inside: avoid">
+  <caption>Puertos de los componentes</caption>
+  <thead><tr><th style="width:22%">Sistema</th><th>Puertos (los publicados en la instancia, en negrita)</th></tr></thead>
+  <tbody>
+    <tr><td>xyz_bank_bff</td><td><strong>MiBff 8443</strong>; ms-cuentas 8081, ms-clientes 8082 y ms-transacciones 8094 (solo red interna)</td></tr>
+    <tr><td>kafka_S8</td><td><strong>api-gateway 80</strong> (8080 en local); config-server 8888, discovery-server 8761 y resilient-client 8083 (solo 127.0.0.1); auth-server 9000, data-ingestion 8081, data-processor 8082, Kafka 9092 y PostgreSQL 5432 (solo red interna)</td></tr>
+    <tr><td>xyz_bank_batch</td><td>PostgreSQL 5432 (solo red interna)</td></tr>
+  </tbody>
+</table>
+<p>Los puertos 8081 y 8082 se repiten entre <code>xyz_bank_bff</code> y <code>kafka_S8</code>, pero ninguno de los dos se publica en el servidor, de modo que no hay conflicto.</p>
+
+<section class="legal">
+  <div class="bloque">
+    <img src="img/logo-portada.png" alt="Duoc UC Online">
+    <p>Reservados todos los derechos Fundación Instituto Profesional Duoc UC. No se permite copiar, reproducir, reeditar, descargar, publicar, emitir, difundir, de forma total o parcial la presente obra, ni su incorporación a un sistema informático, ni su transmisión en cualquier forma o por cualquier medio (electrónico, mecánico, fotocopia, grabación u otros) sin autorización previa y por escrito de Fundación Instituto Profesional Duoc UC La infracción de dichos derechos puede constituir un delito contra la propiedad intelectual.</p>
+  </div>
+</section>
+
+</body>
+</html>

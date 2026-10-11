@@ -1,0 +1,27 @@
+sequenceDiagram
+    actor U as Cliente de integración
+    participant G as api-gateway
+    participant AS as auth-server
+    participant I as data-ingestion-service
+    participant K as Kafka
+    participant P as data-processor-service
+    participant D as PostgreSQL
+
+    U->>G: POST /oauth2/token (Basic banking-client)
+    G->>AS: reenvía la solicitud
+    AS-->>U: 200 JWT firmado (scopes data.read, ingestion.write)
+    U->>G: POST /api/ingestion/run (Bearer JWT)
+    G->>G: Valida firma y expiración del JWT
+    G->>I: lb:// vía Eureka
+    I->>I: Exige scope ingestion.write
+    I->>I: Lee los 3 CSV, valida y normaliza cada fila
+    I->>K: Filas válidas a los topics *-validated
+    I->>K: Filas inválidas a ingestion-rejected (con motivos)
+    I-->>U: 200 informe por archivo
+    K-->>P: Consume (grupo data-processor)
+    P->>D: Upsert idempotente (clave archivo:línea)
+    Note over P,K: Tras 3 reintentos un mensaje con error pasa al topic .DLT
+    U->>G: GET /api/stats (Bearer JWT)
+    G->>P: lb:// vía Eureka
+    P->>D: Consulta conteos
+    P-->>U: 200 estadísticas

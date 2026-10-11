@@ -116,6 +116,8 @@ Ejecutar el script de nuevo es seguro: actualiza el código, reconstruye las im�
 
 ## 4. Verificar
 
+> **Importante:** Si `docker` responde `permission denied ... /var/run/docker.sock`, tu sesión SSH es anterior a la instalación: el script agrega a `ec2-user` al grupo `docker`, pero ese grupo solo aplica a sesiones nuevas. Ejecuta `newgrp docker` en esa terminal, vuelve a conectarte por SSH, o antepón `sudo` a cada `docker`.
+
 Desde la instancia:
 
 ```bash
@@ -215,6 +217,7 @@ Estas pruebas no se hicieron en una instancia EC2 real: la duración depende de 
 
 | Síntoma | Causa y solución |
 |---|---|
+| `permission denied ... docker.sock` | La sesión SSH es anterior al grupo `docker`: ejecuta `newgrp docker`, vuelve a conectarte o usa `sudo docker ...` |
 | SSH o Postman no responden | La IP de origen cambió: actualiza la regla del Security Group con "My IP" |
 | `compose build requires buildx 0.17.0 or later` | Vuelve a ejecutar el script: instala el plugin buildx |
 | Un contenedor se reinicia o queda `unhealthy` | `docker compose logs <servicio>` en la carpeta del sistema; con memoria justa, revisa `free -m` y que el swap esté activo (`swapon --show`) |

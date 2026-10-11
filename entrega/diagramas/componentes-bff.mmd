@@ -1,0 +1,50 @@
+flowchart TB
+    classDef ctrl fill:#e6f4ff,stroke:#2b6cb0,color:#12355b
+    classDef svc fill:#eefaf0,stroke:#2f855a,color:#14452f
+    classDef agg fill:#e0f7ef,stroke:#1d7a5a,color:#0f3f2e,stroke-width:2px
+    classDef cli fill:#fff4dc,stroke:#b7791f,color:#5f370e
+    classDef sec fill:#fde8e8,stroke:#c05656,color:#5c1f1f
+    classDef ext fill:#f3e8ff,stroke:#6b46c1,color:#322659
+    classDef canal fill:#e6f0ff,stroke:#2f5fa7,color:#102a56
+
+    CAN["Canales: Web · Móvil · Cajero (HTTPS :8443)"]:::canal
+
+    subgraph BFF["MiBff · Spring Boot"]
+        SEC["SecurityConfig · HTTP Basic · roles WEB / MOVIL / CAJERO según el prefijo de la ruta"]:::sec
+        CW["CuentaWebController<br/>/api/web/cuentas/{id}"]:::ctrl
+        CM["CuentaMovilController<br/>/api/movil/cuentas/{id}"]:::ctrl
+        CA["CuentaCajeroController<br/>/api/cajero/cuentas/{id}/saldo"]:::ctrl
+        SW["BffWebService<br/>perfil + movimientos + resumen"]:::svc
+        SM["BffMovilService<br/>titular + 5 últimos movimientos"]:::svc
+        SC["BffCajeroService<br/>saldo + titular enmascarado"]:::svc
+        AG["AgregadorService · CompletableFuture + ExecutorService (10 hilos)<br/>si falla ms-clientes, el cliente queda en null"]:::agg
+        C1["CuentasClient"]:::cli
+        C2["TransaccionesClient"]:::cli
+        C3["ClientesClient"]:::cli
+        CFG["BackendConfig · RestClient con timeouts 5 s / 10 s · URLs por propiedad o variable de entorno"]:::sec
+    end
+
+    MSC["ms-cuentas :8081"]:::ext
+    MST["ms-transacciones :8094"]:::ext
+    MSL["ms-clientes :8082"]:::ext
+
+    CAN --> SEC
+    SEC --> CW
+    SEC --> CM
+    SEC --> CA
+    CW --> SW
+    CM --> SM
+    CA --> SC
+    SW --> AG
+    SM --> AG
+    SC -->|"saldo"| C1
+    SC -->|"titular"| AG
+    AG --> C1
+    AG --> C2
+    AG --> C3
+    CFG -.-> C1
+    CFG -.-> C2
+    CFG -.-> C3
+    C1 --> MSC
+    C2 --> MST
+    C3 --> MSL

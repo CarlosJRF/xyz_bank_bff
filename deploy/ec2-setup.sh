@@ -198,6 +198,7 @@ want kafka && echo "  Gateway kafka_S8: http://$HOST:$GATEWAY_PORT/oauth2/token 
 want bff && echo "  BFF:              https://$HOST:$(bff_port)/api/{web,movil,cajero}/cuentas/..."
 want kafka && echo "  Paneles (solo 127.0.0.1): ssh -L 8761:localhost:8761 -L 8083:localhost:8083 ec2-user@$HOST"
 echo "  Repositorios en $APP_ROOT"
+echo "  Docker sin sudo: el grupo 'docker' solo aplica a sesiones nuevas; vuelve a conectarte por SSH o ejecuta 'newgrp docker'."
 
 if [ "$FAILS" -gt 0 ]; then
   echo "  $FAILS prueba(s) fallaron: revisa 'docker compose logs' en el stack correspondiente." >&2

@@ -131,8 +131,9 @@ salvo las cifras de los propios repositorios.
 ```
 entrega/
 ├── readme.md                  Este documento
-├── diagramas/                 Diagramas de arquitectura y de despliegue (.mmd, .svg, .png)
-├── informe-tecnico.pdf        Informe técnico (plantilla PBY2203_EFT_S9_plantilla_PDF)
+├── diagramas/                 Diagramas de arquitectura, componentes, casos de uso, secuencia, batch y despliegue
+├── informe-tecnico.pdf        Informe técnico en PDF
+├── informe/                   Fuente HTML del informe (se imprime a PDF desde Chrome)
 ├── instrucciones.md           Cómo ejecutar y probar cada componente
 ├── despliegue.md              Pasos para desplegar en la nube (AWS EC2)
 └── video-presentacion.mp4     Presentación de 5 a 7 minutos

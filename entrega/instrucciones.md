@@ -84,6 +84,8 @@ Al terminar, el script ejecuta tres pruebas de humo y debe mostrar:
 ==> Ready
 ```
 
+> **Importante:** Si `docker` responde `permission denied ... /var/run/docker.sock`, tu sesión SSH es anterior a la instalación: el script agrega a `ec2-user` al grupo `docker`, pero ese grupo solo aplica a sesiones nuevas. Ejecuta `newgrp docker` en esa terminal, vuelve a conectarte por SSH, o antepón `sudo` a cada `docker`.
+
 Comprobación manual (14 contenedores, todos `healthy`; el job del batch no aparece porque termina al acabar):
 
 ```bash
@@ -674,10 +676,8 @@ cd /opt/xyz-bank/kafka_S8
 docker compose up -d --scale data-processor-service=2 --no-recreate --wait
 ```
 
-En Eureka (comando de K13 o el panel) aparecen **2 instancias** de `DATA-PROCESSOR-SERVICE` en estado `UP`, y el gateway reparte las peticiones entre ellas. Para volver a una sola:
+En Eureka (comando de K13 o el panel) aparecen **2 instancias** de `DATA-PROCESSOR-SERVICE` en estado `UP`, y el gateway puede repartir las peticiones entre ellas mediante `lb://`. Para volver a una sola:
 
 ```bash
 docker compose up -d --scale data-processor-service=1 --no-recreate --wait
 ```
-
-
