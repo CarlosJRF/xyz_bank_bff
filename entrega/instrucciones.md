@@ -84,6 +84,8 @@ Al terminar, el script ejecuta tres pruebas de humo y debe mostrar:
 ==> Ready
 ```
 
+> **Importante:** Si `docker` responde `permission denied ... /var/run/docker.sock`, tu sesión SSH es anterior a la instalación: el script agrega a `ec2-user` al grupo `docker`, pero ese grupo solo aplica a sesiones nuevas. Ejecuta `newgrp docker` en esa terminal, vuelve a conectarte por SSH, o antepón `sudo` a cada `docker`.
+
 Comprobación manual (14 contenedores, todos `healthy`; el job del batch no aparece porque termina al acabar):
 
 ```bash
@@ -715,4 +717,5 @@ La pauta pide cubrir cuatro puntos en el video: resumen ejecutivo, resultados y 
 | `K5` muestra conteos parciales | El procesador aún consume los mensajes de Kafka: repite la petición a los pocos segundos |
 | `K12` o el script no muestran `source: "cache"` | No hubo una respuesta buena previa: ejecuta K9 con el servicio sano y repite |
 | El script del circuit breaker no encuentra el gateway | Pasa `GATEWAY_URL=http://localhost` (en la instancia el gateway está en el puerto 80, no en el 8080) |
+| `permission denied ... docker.sock` | La sesión SSH es anterior al grupo `docker`: ejecuta `newgrp docker`, vuelve a conectarte o usa `sudo docker ...` |
 | `docker compose` no encuentra el archivo | Estás en otra carpeta: entra a la carpeta del sistema bajo `/opt/xyz-bank` |
