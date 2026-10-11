@@ -5,106 +5,110 @@
 <title>Informe técnico — Modernización del sistema legacy del Banco XYZ</title>
 <meta name="author" content="Estudiante — Desarrollo Backend III">
 <style>
-  :root {
-    --navy: #17324d;
-    --blue: #2b6cb0;
-    --teal: #1d7a5a;
-    --ink: #1f2933;
-    --muted: #5b6672;
-    --line: #d5dbe2;
-    --soft: #f3f6f9;
-    --warn: #fff7e0;
-  }
+  /* Formato de la plantilla PBY2203_EFT_Plantilla_Informe_PDF (Duoc UC): carta, Arial 12, texto #404040,
+     interlineado 1,5, títulos 22/16/12 pt en negrita, tablas con encabezado gris F0F0F0, acento amarillo FFB800. */
+  :root { --ink: #404040; --grey: #F0F0F0; --line: #D9D9D9; --yellow: #FFB800; --link: #0563C1; }
   @page {
-    size: A4;
-    margin: 24mm 20mm 22mm 20mm;
-    @top-left   { content: "Informe técnico · Banco XYZ"; font: 8pt "Liberation Sans", sans-serif; color: #5b6672; border-bottom: 0.5pt solid #d5dbe2; padding-bottom: 2mm; }
-    @top-right  { content: "PBY2203 · Evaluación Final Transversal"; font: 8pt "Liberation Sans", sans-serif; color: #5b6672; border-bottom: 0.5pt solid #d5dbe2; padding-bottom: 2mm; }
-    @bottom-center { content: "Página " counter(page) " de " counter(pages); font: 8pt "Liberation Sans", sans-serif; color: #5b6672; }
+    size: letter;
+    margin: 25.4mm 19.05mm 25.4mm 19.05mm;
+    @top-right { content: ""; background: url("img/logo-encabezado.png") no-repeat right 0 top 2.3mm / 57.4mm 15.6mm; }
+    @bottom-right {
+      content: counter(page);
+      background: url("img/logo-pie.png") no-repeat right 9.3mm bottom 8mm / 22.4mm 8mm, url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMTE5NS43MDUgMjk4LjkyMyIgd2lkdGg9IjExOTUuNzA1IiBoZWlnaHQ9IjI5OC45MjMiPjxyZWN0IHg9IjkuNTI1IiB5PSI5LjUyNSIgd2lkdGg9IjExNzYuNjU1IiBoZWlnaHQ9IjI2MC4zNSIgcng9IjEzMC4xNzUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0Q5RDlEOSIgc3Ryb2tlLXdpZHRoPSIxOS4wNSIvPjxpbWFnZSB4PSI1My4xNjMiIHk9IjEwLjYzMyIgd2lkdGg9IjgwNi40NSIgaGVpZ2h0PSIyODguMjkiIHhsaW5rOmhyZWY9ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBUklBQUFCaUNBWUFBQUNjWWx4V0FBQUFDWEJJV1hNQUFCY1JBQUFYRVFIS0p2TS9BQUFRNEVsRVFWUjRuR0w4Ly84L3d5Z1lCYU5nRkpBTkdCZ1lBQUFBQVAvL1lob052VkV3Q2tZQlJZQ0JnUUVBQUFELy94b3RTRWJCS0JnRmxBRUdCZ1lBQUFBQS8vOGFMVWhHd1NnWUJaUUJCZ1lHQUFBQUFQLy9HaTFJUnNFb0dBV1VBUVlHQmdBQUFBRC8veG90U0ViQktCZ0ZsQUVHQmdZQUFBQUEvLzhhTFVoR3dTZ1lCWlFCQmdZR0FBQUFBUC8vR2kxSVJzRW9HQVdVQVFZR0JnQUFBQUQvL3hvdFNFYkJLQmdGbEFFR0JnWUFBQUFBLy84YUxVaEd3U2dZQlpRQkJnWUdBQUFBQVAvL0dpMUlSc0VvR0FXVUFRWUdCZ0FBQUFELy94b3RTRWJCS0JnRmxBRUdCZ1lBQUFBQS8vOGFMVWhHd1NnWUJaUUJCZ1lHQUFBQUFQLy9HaTFJUnNFb0dBV1VBUVlHQmdBQUFBRC8veG90U0ViQktCZ0ZsQUVHQmdZQUFBQUEvLzhhTFVoR3dTZ1lCWlFCQmdZR0FBQUFBUC8vR2kxSVJzRW9HQVdVQVFZR0JnQUFBQUQvL3hvdFNFYkJLQmdGbEFFR0JnWUFBQUFBLy84YUxVaEd3U2dZQlpRQkJnWUdBQUFBQVAvL0dpMUlSc0VvR0dLQWtaRlJnSkdSc1lHUmtmRUNGRDlnWkdSY3dNaklxREFnUG1GZ1lBQUFBQUQvL3hvdFNFYkJLQmhDQUZTSU1EQXdISUM2Mk9ILy8vOEcvLy8vQnhVZ0lMRURqSXlNQm5UM0RRTURBd0FBQVAvL0dqMzhlUlNNZ2lFRUdCa1pRUVhHQWdZR2hnc01EQXdUb0M0SHNSc1lHQmhBQmNvQ1VPRkNWeDh4TURBQUFBQUEvLzhhYlpHTWdsRXdSQUNzNi9MLy8zOVFRUUpxbVlCQUFRTURRd0FEQTBQQy8vLy9RUVVLcUZXU1FGY2ZNVEF3QUFBQUFQLy9HaTFJUnNFb0dEb0Exb1dCQVZCaDRnQ2xOMEFGUVRSOXgwb1lHQmdBQUFBQS8vOGFMVWhHd1NnWXVnQlVnSUJhSHcvKy8vLy9ZTUI4d2NEQUFBQUFBUC8vWWhrTVFkalIwVzZBMUZTREFSQWZ1YS8zQUlwaDRFTkZSZVVGdWpwMEZJeUNnUVVmc09RSlVMY0czSjJCZG5sQUxSVDZGaW9NREF3QUFBQUEvLytpNjJCclIwZTdBclFFaFRYSDlLbGc3RWZvWUJPb3lYZWhvcUp5QXhGNlJzRW9HSklBT3RnS0dsZ0ZnWWIvLy84N1FNZEVRSGtLSkE2U0I4M2tnQW9kK2dBR0JnWUFBQUFBLy8raWQwRUM4dXgrT2xpMUVEUjZYVkZSZVlBSXRhTmdGQXdaQUIxd0JhWHJDZi8vLzRmTjJvREVRWGtMeEMvNC8vOC9mZE05QXdNREFBQUEvLzhhcmdVSkREd0V0WUJHQzVSUk1OZ0J0Q0RBQ1pBTEIraGFFbENoQWV2R2dBb1g4QlF3ZE9hR3ZvQ0JnUUVBQUFELy94cnVCUWtNYklRV0tIUnQ3bzBDNmdKb0U1N1ExT2FGLy8vL0Y1QnFNWFFoMXdSQzZrQmRDVW85QlMwSVFHTWJJTE5BV0o1SXJhQ0tFZGFOM3pEUUE2eHd3TURBQUFBQUFQLy9HaFNEclhRQS9xQUk2T2hvRHhnZG9CM1NBRlR6MnRQSUF3STBOQnNNb0swT1VDRUhTby9rQUZDQkE4SWcvZjJNakl5Ti8vLy9oNDJYREJ4Z1lHQUFBQUFBLy84YVNkTy9vQWc0QUowaEdnV2pnRzRBMU5xQkRwS0NXdVBrRmlMWXdPQm9ZVE13TUFBQUFBRC8veHBwNjBqNFJ3dVRVVUJQd01qSUNPb3VuYWRSYTJkd2pQMHhNREFBQUFBQS8vOGFyRjJiaDBqN0NkQkxYUU5vRTllQnpPbGpVR0d5QVZTWWpJNlpqQUphQWFUTmRkUlk0b0FOZkJ5b2dWVU13TURBQUFBQUFQLy9HcXdGeVlPS2lrcGNmVDk0S1l5MExxVUFXa0FRQytTaEJWVUFYWHd6Q2tZVW9FTWhBZ0tEWnlhU2dZRUJBQUFBLy84YTBsMmJpb3BLV0lHakFGMDdRZ3J3aDg0aWpZSlJRRFZBcDBJRUJBWlBRY0xBd0FBQUFBRC8veG9Xc3piUUxrcENSMGM3S0hEbms2QzFBZHBGR2dXamdGb0F0TEthbkVMa0lHeDFObHAzSGxSSndycnlvRzQ5ck9VOWVBb1NCZ1lHQUFBQUFQLy9HbGJUdnhVVmxRdWczWjE2SXJYWWc5U0RXamJJZ2gwZDdjUk1xWUZhUXdzSUtZSzJlb2dwckJhZ3U0TVlBSnJTUmtwa3VBYjBMa0lYTG9FUytRWmFqZzFCQjdKaGJsTEFzMFlDNXFZTFVEY04rV2w1UmtaR1VCZWJsRUZWMEZnZ2FEQVdkSVlJVVhIQ3lNZ0lDdHVBd1RRK3dzREF3QUFBQUFELy94cDI2MGhBWFIxbzVpVTJRZ3VnR0JrUVV4QWRoSTZ6RUFJT1JKcDNnTmpOVnREQ3NnR2FZWWtaRzlLSFl0RFU0L3lPam5aUU43Q0JuSUlMaDNzRW9HR1lRTUxpS21RMzFYZDB0QmRXVkZRU1hCQTJXQUYwNlRvcGF6cEFjUUJhems1U29mNy8vMzl3WlRDb2dvR0JnUUVBQUFELy94cXUwNytrUk9pUTZ0cEFXMHYzR1JnWTRra2NZRVlHSUwzM096cmFKMEFMQVVyZDh3QmFXQkpiaUdBRFEzMGJBeWdjaUkyUHhQLy8vNE4yNnc2UFdVTUdCZ1lBQUFBQS8vOGFsZ1VKZEcvTlJTS1Y2MU9hbWVnQlFHN3M2R2kvUUVLM2pSaVFEMTFYUTdMLzBkeERib0VHQjBPNWF3TWRZQVVWenNRQTBHcFVZbHF5UXdjd01EQUFBQUFBLy84YXpndlNTSW1zUWIxQURaclJhVFVUb0U5cVlRSWRCM2xBUmZjY3BKSTVBd1dJUGRydzRtQlowazVWd01EQUFBQUFBUC8vR3M0RkNTbE41VUhidmFGeElRSURSQmNtU082aHVCV0NCSWI2UUN1eEJRbkptd21IQkdCZ1lBQUFBQUQvL3hxMkJja3cycHpYUUljMUNReFFPNGlwTGFsZGlEQU01ZkVSYUxlR21QZ0J0VWFHNTNFV0RBd01BQUFBQVAvL0d1NTdiWWdkSnhtd2k0WHdBZWpzVXo0SldrQXpBWTRWRlpXTURBd01nZ3dNRElFa2RodnlvVE5DV0FGMFlKWGNOUklUUWVNRFVId1FMVzZHY3FGUGJHdDIySTJMd0FFREF3TUFBQUQvL3hydXh3Z1FPeW8rS0FzU0VtZWZFcEhYdFVEWGlteUE3aXRhUU1KZ1lBTzJwanJTRkMreDRDTjBqY1FFWE90V29HWUdVR3NhZW9BQXNlTnJ3L2R3TFFZR0JnQUFBQUQvL3hvOVJYNlFBdWlBSnJGcllScnhMWTZycUtoTUlLRmxFbzlqcklTVS9VeWcxb1lEYUUwUHZzVnZJRGxpRnZVTmNrQlVKVFRZRnBCUkZUQXdNQUFBQUFELy94b3RTQVl2SUhZQTd5R2VEWTdJZ0pUV0RiYk5qTVM2NXlPMGxURlNEcEFpcGlBQmhjbndCUXdNREFBQUFBRC8veG90U0NCZ01DWjZxdmE5U1Z4YmcxS1FRRnRIeEM0Mkt4amlYUlZhZ09GZHFESXdNQUFBQUFELy94cnVCUW14L2RmQnVNS1EyRUZOVXBaTEU2c1dQZHlJTGRRZURvT3V5aWdnRlRBd01BQUFBQUQvL3hxMkJRbTBuMDlzbjM1UUZTU2tIRzlBWWhlQzJBRS85TllIc1lQUm82ZjFZd2VEZFRDZk9vQ0JnUUVBQUFELy94ck9MUkpTRnBrTjFhWW5zVjBWa2dIYWdPdm96QVJsZ0pJOVNJTWZNREF3QUFBQUFQLy9HaTFJSUdDb0ZpUWt0YVJJdk4rSG5HMERJM0ZzaE5qdC84TzNWY0xBd0FBQUFBRC8veHJPQlFteHh5aGVIRDI3ZFJSUUFJaXRoSWJ2QVZvTURBd0FBQUFBLy84YWxnVkpSMGM3S2VkaWpKam1PQ21uNTVONU95R3RhMTFpV2p5MDNNbU5yU3RKYkN0cytKNFB6TURBQUFBQUFQLy9HbllGQ2JSdlQ4cWFpYUU4eTBCcTk0UFd4eVhRZWhjMU1abVczSDFKeExnZFc4dVYyQUxYZjloMmJ4Z1lHQUFBQUFELy94cU9MWklHRWxvakZ5bFlPRVZzcGlFbjh4SmJ5L0hqMnh1REJSRHI1b2RvZkdMRGlOYTFMbEhoQXIxK2sxUkFqQjZNY0lCZW00a2VYcmpBa0QwQkRpOWdZR0FBQUFBQS8vOGFWZ1VKdEV0RHlpWTNTaUtXbjhnelBFaE8xTkFGWGNTdWhpU2w3MDJzV3ZRTVEyekJKZytOQTVvQUV1NjZKYWRBSTBZUEx2dUpYWjhEYXBYUUxId0dEREF3TUFBQUFBRC8veG8yQlFsMFp5b3BKOGhUWS9FVTNzUUhMV2pJdldHTjJDWXpVUWtUNmhaaXI0dEV6eGlrakpjMDBQakVPV0wyREpHVVdhR1ptNWcxUjdqQ2daUUthUUtaTGFiQkN4Z1lHQUFBQUFELy94cnlCUWxvOFJhWlJ4RGlTMnpFTmxVSlpScEtUbWtqdHBhekozSUJHeW5qUmlnWkJ0cjlJelpNNU1rOXZwRklRRXk0eURNeU1oTGxYK2g1SXNTb2ZZaHI0eDIwcFVUc3BraFFnWFVlZXVMODhBQU1EQXdBQUFBQS8vOGFrZ1VKYUZ3QTFJU0czbU96bjR3QnRva0VaaVdJSFJQQW1tbWc1NWx1SVBIQ2FQU010NEdFN3MwR2ZCbVh4QzdmUmh4N1pVZ3BGRUh4Y1lHWWJnNDBMa2twZElndFlPc0pkU09naGNnRUlzZlVDTmxMYXNIUUQ3cFluSkdSa2VScFlYTDAwQlF3TURBQUFBQUEvLzlpL1AvL1A5MHNnOWFjKzRsUStoR2FtWkV2QzRJRm5nR0ZKM1NCQmxqeE5pMDdPdHBCaWFLZlJITVBRdDFMeXZaL1pOQ0l2b3NYMmwwanRxWDFFYnBoRHA3aGtjNFFJYVcxNW9pdGtJV2E5WUNNc0grSWROWEdBYVFMbjJDWFBzbWpuNlZDQ0VCdjlpYzJqTUZYYjZDUHIwQUxHVklHNWhVSmpkRkFMd3duWll3T0JrQmhCQ3FvUVA0Q3BmY0xvQlBtb2JNOElBd0tlMUM2Z2wrejh2Ly9mOURoVllNRE1EQXdBQUFBQVAvL0dxd0hHL0ZEQTR6YU43aGZKSExBY1FNWkJRa3QzRHVCaEhOQStLRjMxa3hBYWxHUjZoNmNMVFhRb2oybzJhUjJJZVdSRGxYQ3BaZlVhZEVHSWlza0JxamQ4WXlNakxES2lkaWpFWkhCUkdJR2V2Ly8vMThBYlMyUWFqNG9qRUFGRUx3UVltVEVYMDZBN0JrMFJ6Y3lNREFBQUFBQS8vOGFTY2NJd0E3YkliaUtGZHEwSC9DVHphRnVKWFVHZ3R4QytDS2hzUUpvaTRrVyszdElhcXBETTlCR0V1MkFoUXVwbWZ3akdmY2tFVHVlUkFrWVBBTzJEQXdNQUFBQUFQLy9HaWtGQ2FpbU5TQnhLVHcxcncwZ08vTkJXd2lKVkhRTE5nREtMQWxFaG84RERRN3FJV2RnTm9GT0J3WTVrSEtSRlZRdEtJeG90cUVTQ2daUFFjTEF3QUFBQUFELy94cnVCY2xCYUorZjVCRnlhQVplU0FVM0VLenBpWERMQWhvV0pnK2hMVFdpQnBpaGhZMEJsVE1LeWF0UmtUSXNMUXVUUkhLT1NJUjJnMEJ1bzJXcmR2QVVKQXdNREFBQUFBRC8veHF1QmNsR2FBSGlRT2FlRVJnb29ERER3TVprS040VUNDMU1IS25jYkFhRmt3R3BxM3VoWFQ4SE1yb1hPQUVwKzRCZ0FKckphVkg3Z3dvblEwcHV4QU1WZFAvLy93ZTVyWkJHaFIwOXJpZ2hEakF3TUFBQUFBRC8veHBPQmNsQmFLUXBWbFJVQmxCWWdJQUJ0UFoxSUxObE1oRTJKa01OdHpBZ1dra0cwQ3NkS0VtY3NKWmFBTGs3bjZIK0NvQVdidFNvZWNsYWQ0SlVtRFJTd1EwTTBIaFRvTlpoemYvLy93Y05VSU1Ha3ltTk13d3dhS2FCR1JnWUFBQUFBUC8vb3ZmMEwrekdkdGdvUFRtekhBK2hVNGtQWUZQRTFNcW8rQUIwNnJxQXdOcVFqOUFaSDR5Yi9xRnJYdkNCRGFUY3hnKzd5Z0dLaVZtdkFwdGlYRUNMZzVtaExZb0VhS1ltdHJhRVRRMkQvRTd4RGZ2UWRTRUpVRXhLalgwUnVrNW1Bd25MOE1rQ2pJeU1zRGlEVFgyVENrQ0ZOdmlhRVZxN2xXakF3TUFBQUFBQS8vK2lhMEZDRE1DMlNwTWVCUVVaYmhSQTZxZUM1LzhIOHVSMGFFWVdRRnFqd1lDMFF2VUN2YzljUVlwSEE2VFdCbnhkRUszakZGcW9HT0NaRWZvQXE0aElHVXlsSmtCYUo0SWNSdGdBT0gwTjJpc3RHQmdZQUFBQUFQLy9HblFGeVNnWUJhTmdpQUVHQmdZQUFBQUEvLzhhdlk1aUZJeUNVVUFaWUdCZ0FBQUFBUC8vR2kxSVJzRW9HQVdVQVFZR0JnQUFBQUQvL3hvdFNFYkJLQmdGbEFFR0JnWUFBQUFBLy84YUxVaEd3U2dZQlpRQkJnWUdBQUFBQVAvL0dpMUlSc0VvR0FXVUFRWUdCZ0FBQUFELy94b3RTRWJCS0JnRmxBRUdCZ1lBQUFBQS8vOGFMVWhHd1NnWUJaUUJCZ1lHQUFBQUFQLy9HaTFJUnNFb0dBV1VBUVlHQmdBQUFBRC8veG90U0ViQktCZ0ZsQUVHQmdZQUFBQUEvLzhhTFVoR3dTZ1lCWlFCQmdZR0FBQUFBUC8vR2kxSVJzRW9HQVdVQVFZR0JnQUFBQUQvL3hvdFNFYkJLQmdGbEFFR0JnWUFBQUFBLy84YUxVaEd3U2dZQlpRQkJnWUdBQUFBQVAvL0dpMUlSc0VvR0FXVUFRWUdCZ0FBQUFELy94b3RTRWJCS0JnRmxBRUdCZ1lBQUFBQS8vOGFMVWhHd1NnWUJaUUJCZ1lHQUFBQUFQLy9HaTFJUnNFb0dBV1VBUVlHQmdBQUFBRC8veG90U0ViQktCZ0ZsQUVHQmdZQUFBQUEvLzhhTFVoR3dTZ1lCWlFCQmdZR0FBQUFBUC8vR2kxSVJzRW9HQVdVQVFZR0JnQUFBQUQvL3hvdFNFYkJLQmdGbEFFR0JnWUFBQUFBLy84YUxVaEd3U2dZQlpRQkJnWUdBQUFBQVAvL0dpMUlSc0VvR0FXVUFRWUdCZ0FBQUFELy94b3RTRWJCS0JnRmxBRUdCZ1lBQUFBQS8vOGFMVWhHd1NnWUJaUUJCZ1lHQUFBQUFQLy9HaTFJUnNFb0dBV1VBUVlHQmdBQUFBRC8veG90U0ViQktCZ0ZsQUVHQmdZQUFBQUEvLzhEQUVVUnpvUjB6cEZHQUFBQUFFbEZUa1N1UW1DQyIvPjxsaW5lIHgxPSI4NjEuMjM4IiB5MT0iNjMuNzk2IiB4Mj0iODYxLjIzOCIgeTI9IjIxNy40NjYiIHN0cm9rZT0iI0Q5RDlEOSIgc3Ryb2tlLXdpZHRoPSIxMi43Ii8+PC9zdmc+") no-repeat right 0 bottom 8mm / 33.2mm 8.3mm;
+      font: 12pt "Arial", "Liberation Sans", sans-serif; color: #404040;
+      text-align: right; vertical-align: bottom; padding: 0 2.4mm 9.8mm 0;
+    }
   }
-  @page cover { margin: 0; @top-left { content: none; border: 0; } @top-right { content: none; border: 0; } @bottom-center { content: none; } }
-  html { font-family: "Liberation Sans", "DejaVu Sans", sans-serif; font-size: 10pt; line-height: 1.45; color: var(--ink); }
+  @page cover { margin: 0; @top-right { content: none; background: none; } @bottom-right { content: none; background: none; } }
+  @page back  { margin: 0; @top-right { content: none; background: none; } @bottom-right { content: none; background: none; } }
+
+  html { font-family: "Arial", "Liberation Sans", sans-serif; font-size: 12pt; line-height: 1.5; color: var(--ink); }
   body { margin: 0; counter-reset: fig tbl; }
-  p { margin: 0 0 2.6mm; text-align: justify; hyphens: auto; }
-  a { color: var(--blue); text-decoration: none; }
-  strong { color: #111c27; }
-  code { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; font-size: 8.6pt; background: #eef2f6; padding: 0.2mm 1mm; border-radius: 1mm; }
-  pre { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; font-size: 8pt; line-height: 1.35; background: #f3f6f9; border: 0.4pt solid var(--line); border-radius: 1.5mm; padding: 2.5mm 3mm; margin: 0 0 3mm; white-space: pre-wrap; break-inside: avoid; }
+  p { margin: 0 0 9pt; text-align: justify; hyphens: auto; }
+  a { color: var(--link); text-decoration: none; }
+  strong { color: var(--ink); }
+  code { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; font-size: 10pt; background: var(--grey); padding: 0 1mm; border-radius: 1mm; }
+  pre { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; font-size: 8.6pt; line-height: 1.35; background: var(--grey); border: 0.5pt solid var(--line); border-radius: 2mm; padding: 3mm 4mm; margin: 0 0 10pt; white-space: pre-wrap; break-inside: avoid; }
 
-  h1 { font-size: 17pt; color: var(--navy); margin: 0 0 4mm; padding-bottom: 2mm; border-bottom: 1.2pt solid var(--blue); break-before: page; break-after: avoid; }
-  h1.sin-salto { break-before: auto; margin-top: 8mm; }
-  h2 { font-size: 12.5pt; color: var(--navy); margin: 6mm 0 2mm; break-after: avoid; }
-  h3 { font-size: 10.5pt; color: var(--teal); margin: 4mm 0 1.5mm; break-after: avoid; }
-  ul, ol { margin: 0 0 3mm; padding-left: 5.5mm; }
-  li { margin-bottom: 1mm; text-align: justify; }
+  h1 { font-size: 22pt; font-weight: bold; margin: 18pt 0; break-before: page; break-after: avoid; line-height: 1.25; }
+  h1.sin-salto { break-before: auto; margin-top: 22pt; }
+  h2 { font-size: 16pt; font-weight: bold; margin: 14pt 0 7pt; break-after: avoid; line-height: 1.3; }
+  h3 { font-size: 12pt; font-weight: bold; margin: 10pt 0 5pt; break-after: avoid; }
+  ul, ol { margin: 0 0 9pt; padding-left: 6.4mm; }
+  li { margin-bottom: 3pt; text-align: justify; }
 
-  table { width: 100%; border-collapse: collapse; margin: 1mm 0 3.5mm; font-size: 8.6pt; line-height: 1.35; }
-  caption { caption-side: top; text-align: left; font-size: 8.6pt; font-weight: bold; color: var(--navy); padding: 0 0 1.2mm; counter-increment: tbl; }
-  caption::before { content: "Tabla " counter(tbl) ". "; }
-  th { background: var(--navy); color: #fff; text-align: left; padding: 1.4mm 2mm; font-weight: bold; }
-  td { padding: 1.3mm 2mm; border-bottom: 0.4pt solid var(--line); vertical-align: top; }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 12pt; font-size: 10pt; line-height: 1.35; }
+  caption { caption-side: top; text-align: left; font-size: 12pt; font-weight: bold; padding: 6pt 0; counter-increment: tbl; }
+  caption::before { content: "Tabla " counter(tbl) ": "; }
+  th { background: var(--grey); text-align: center; font-weight: bold; padding: 4pt 6pt; border: 0.5pt solid #000; vertical-align: middle; }
+  td { padding: 4pt 6pt; border: 0.5pt solid #000; vertical-align: middle; }
   tr { break-inside: avoid; }
-  tbody tr:nth-child(even) td { background: var(--soft); }
   td.num, th.num { text-align: right; white-space: nowrap; }
 
-  figure { margin: 2mm 0 4mm; text-align: center; break-inside: avoid; }
+  figure { margin: 4pt 0 12pt; text-align: center; break-inside: avoid; }
   figure img { max-width: 100%; display: block; margin: 0 auto; }
-  figure.alta img { max-height: 205mm; width: auto; }
-  figure.media img { max-height: 112mm; width: auto; }
-  figure svg { width: 148mm; max-width: 100%; height: auto; display: block; margin: 0 auto; }
-  figcaption { font-size: 8.4pt; color: var(--muted); margin-top: 1.5mm; counter-increment: fig; }
-  figcaption::before { content: "Figura " counter(fig) ". "; font-weight: bold; color: var(--navy); }
+  figure.alta img { max-height: var(--mh, 160mm); width: auto; }
+  figure.media img { max-height: 100mm; width: auto; }
+  figure svg { width: 132mm; max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  figcaption { font-size: 10pt; line-height: 1.35; margin-top: 4pt; counter-increment: fig; }
+  figcaption::before { content: "Figura " counter(fig) ": "; font-weight: bold; }
 
-  .nota { background: var(--warn); border-left: 1.2mm solid #d69e2e; padding: 2mm 3mm; margin: 0 0 3.5mm; font-size: 9.2pt; break-inside: avoid; }
-  .nota p:last-child { margin-bottom: 0; }
-  .dato { background: var(--soft); border-left: 1.2mm solid var(--blue); padding: 2mm 3mm; margin: 0 0 3.5mm; font-size: 9.2pt; break-inside: avoid; }
-  .dato p:last-child { margin-bottom: 0; }
-  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5mm; margin: 2mm 0 4mm; }
-  .kpi { border: 0.6pt solid var(--line); border-top: 1.4mm solid var(--blue); border-radius: 1.5mm; padding: 2.2mm 2.5mm; text-align: center; break-inside: avoid; }
-  .kpi b { display: block; font-size: 15pt; color: var(--navy); }
-  .kpi span { font-size: 8pt; color: var(--muted); }
+  .nota, .dato { background: var(--grey); border-left: 3mm solid var(--yellow); padding: 3mm 4mm; margin: 0 0 12pt; font-size: 11pt; line-height: 1.4; break-inside: avoid; }
+  .dato { border-left-color: #A6A6A6; }
+  .nota p:last-child, .dato p:last-child { margin-bottom: 0; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin: 2mm 0 12pt; }
+  .kpi { background: var(--grey); border-top: 1.4mm solid var(--yellow); border-radius: 2mm; padding: 3mm; text-align: center; break-inside: avoid; }
+  .kpi b { display: block; font-size: 17pt; line-height: 1.3; }
+  .kpi span { font-size: 9pt; line-height: 1.3; display: block; }
 
-  /* Portada */
-  .portada { page: cover; height: 297mm; position: relative; break-after: page; background: #fff; }
-  .portada .banda { background: var(--navy); color: #fff; padding: 34mm 24mm 16mm; height: 118mm; box-sizing: border-box; }
-  .portada .banda .curso { font-size: 10pt; letter-spacing: 0.6mm; text-transform: uppercase; color: #b9cde4; margin-bottom: 14mm; }
-  .portada .banda h1 { color: #fff; border: 0; font-size: 27pt; line-height: 1.15; margin: 0 0 5mm; padding: 0; break-before: auto; }
-  .portada .banda .sub { font-size: 12.5pt; color: #d7e4f3; max-width: 150mm; }
-  .portada .acento { height: 2.2mm; background: linear-gradient(90deg, var(--blue), var(--teal)); }
-  .portada .datos { padding: 18mm 24mm 0; }
-  .portada .datos table { font-size: 10pt; width: 130mm; }
-  .portada .datos td { border-bottom: 0.4pt solid var(--line); padding: 2.4mm 2mm; background: none !important; }
-  .portada .datos td:first-child { color: var(--muted); width: 38mm; }
-  .portada .repos { position: absolute; left: 24mm; right: 24mm; bottom: 20mm; font-size: 8.8pt; color: var(--muted); border-top: 0.5pt solid var(--line); padding-top: 3mm; }
-  .portada .repos div { margin-bottom: 1mm; }
+  /* Portada: medidas de la plantilla (carta, 21,59 x 27,94 cm) */
+  .portada { page: cover; position: relative; width: 215.9mm; height: 279.4mm; overflow: hidden; break-after: page; background: #fff; }
+  .portada .logo { position: absolute; left: 7.4mm; top: 0.6mm; width: 57.4mm; height: 15.6mm; }
+  .portada .barra { position: absolute; left: 72.9mm; top: 5.3mm; width: 133mm; height: 7.3mm; border-radius: 4mm; background: #E7E8E9; }
+  .portada .foto { position: absolute; left: 10.3mm; top: 18.6mm; width: 195.7mm; height: 106.9mm; border-radius: 5.2mm; border: 1pt solid #AEAAAA; box-sizing: border-box; object-fit: cover; }
+  .portada .acento { position: absolute; left: 10.3mm; top: 145.6mm; width: 3mm; height: 20mm; background: var(--yellow); }
+  .portada .titulos { position: absolute; left: 19.05mm; top: 143mm; right: 19.05mm; }
+  .portada .titulos .t { font-size: 28pt; font-weight: bold; line-height: 1.15; letter-spacing: -0.2pt; margin: 0 0 3mm; }
+  .portada .titulos .b { font-size: 22pt; line-height: 1.3; margin: 0; }
+  .portada .datos { position: absolute; left: 19.05mm; right: 19.05mm; top: 183mm; font-size: 12pt; line-height: 1.5; }
+  .portada .datos div { margin-bottom: 1.5mm; }
+  .portada .datos b { font-weight: bold; }
+  .portada .repos { position: absolute; left: 19.05mm; right: 19.05mm; bottom: 18mm; font-size: 10pt; line-height: 1.5; border-top: 0.5pt solid var(--line); padding-top: 3mm; }
 
-  /* Índice */
-  .indice h1 { break-before: auto; }
+  /* Índice (estilos TDC1/TDC2 de la plantilla: punteado a la derecha con número de página) */
+  .indice h1 { break-before: auto; margin-top: 0; }
   .indice ol { list-style: none; padding: 0; margin: 0; }
-  .indice li { display: flex; align-items: baseline; margin: 0; padding: 0.6mm 0; text-align: left; }
+  .indice li { display: flex; align-items: baseline; margin: 0; padding: 0; text-align: left; line-height: 1.32; }
   .indice li .t { flex: 0 1 auto; }
-  .indice li .p { flex: 0 0 auto; margin-left: 2mm; color: var(--navy); font-weight: bold; }
-  .indice li .fill { flex: 1 1 auto; border-bottom: 0.6pt dotted #9aa6b2; margin: 0 1.5mm; transform: translateY(-1mm); min-width: 8mm; }
-  .indice li.n1 { font-weight: bold; margin-top: 2.2mm; color: var(--navy); }
-  .indice li.n2 { padding-left: 6mm; font-size: 9.4pt; }
+  .indice li .p { flex: 0 0 auto; margin-left: 2mm; }
+  .indice li .fill { flex: 1 1 auto; border-bottom: 0.8pt dotted #7F7F7F; margin: 0 1.5mm; transform: translateY(-1mm); min-width: 8mm; }
+  .indice li.n1 { font-size: 12pt; margin-top: 3pt; }
+  .indice li.n2 { padding-left: 12.5mm; font-size: 11pt; }
+
+  /* Última página: aviso legal de la plantilla */
+  .legal { page: back; position: relative; width: 215.9mm; height: 279.4mm; overflow: hidden; break-before: page; background: #fff; }
+  .legal .bloque { position: absolute; left: 9.7mm; top: 96mm; width: 195mm; height: 125mm; border-radius: 6mm; background: #E6E7E8; }
+  .legal .bloque img { position: absolute; left: 55mm; top: 12mm; width: 83mm; }
+  .legal .bloque p { position: absolute; left: 12mm; right: 12mm; top: 56mm; margin: 0; font-size: 10pt; line-height: 1.38; text-align: center; hyphens: none; }
 </style>
 </head>
 <body>
+<img src="img/logo-pie.png" alt="" style="position:absolute;width:1px;height:1px;opacity:0">
 
 <section class="portada">
-  <div class="banda">
-    <div class="curso">Desarrollo Backend III · PBY2203 · Evaluación Final Transversal</div>
-    <h1>Modernización del sistema legacy del Banco XYZ</h1>
-    <div class="sub">Informe técnico: migración de procesos batch, patrón Backend for Frontend y microservicios resilientes con Spring Cloud, Kafka y Docker en AWS</div>
-  </div>
+  <img class="logo" src="img/logo-encabezado.png" alt="Duoc UC Online">
+  <div class="barra"></div>
+  <img class="foto" src="img/portada.jpg" alt="">
   <div class="acento"></div>
+  <div class="titulos">
+    <p class="t">Desarrollo Backend III</p>
+    <p class="b">Informe técnico final: modernización del sistema legacy del Banco XYZ</p>
+  </div>
   <div class="datos">
-    <table>
-      <tr><td>Estudiante</td><td>[Nombre completo del estudiante]</td></tr>
-      <tr><td>Asignatura</td><td>Desarrollo Backend III (PBY2203)</td></tr>
-      <tr><td>Evaluación</td><td>Evaluación Final Transversal · Entrega individual</td></tr>
-      <tr><td>Fecha</td><td>Octubre de 2026</td></tr>
-    </table>
+    <div><b>Asignatura:</b> Desarrollo Backend III (PBY2203)</div>
+    <div><b>Evaluación:</b> Evaluación Final Transversal · Entrega individual</div>
+    <div><b>Estudiante:</b> [Nombre completo del estudiante]</div>
+    <div><b>Fecha:</b> Octubre de 2026</div>
   </div>
   <div class="repos">
     <div><b>Código fuente</b></div>
@@ -118,39 +122,39 @@
   <h1>Índice</h1>
   <ol>
 <li class="n1"><span class="t">1. Resumen ejecutivo</span><span class="fill"></span><span class="p">3</span></li>
-<li class="n1"><span class="t">2. Contexto y problema</span><span class="fill"></span><span class="p">3</span></li>
-<li class="n2"><span class="t">2.1 Situación del sistema legacy</span><span class="fill"></span><span class="p">3</span></li>
+<li class="n1"><span class="t">2. Contexto y problema</span><span class="fill"></span><span class="p">4</span></li>
+<li class="n2"><span class="t">2.1 Situación del sistema legacy</span><span class="fill"></span><span class="p">4</span></li>
 <li class="n2"><span class="t">2.2 Alcance de la solución</span><span class="fill"></span><span class="p">4</span></li>
-<li class="n1"><span class="t">3. Procesos clave de la migración</span><span class="fill"></span><span class="p">4</span></li>
-<li class="n1"><span class="t">4. Propuesta de arquitectura</span><span class="fill"></span><span class="p">5</span></li>
-<li class="n2"><span class="t">4.1 Requerimientos clave del negocio</span><span class="fill"></span><span class="p">5</span></li>
-<li class="n2"><span class="t">4.2 Decisiones de arquitectura y alternativas descartadas</span><span class="fill"></span><span class="p">5</span></li>
-<li class="n2"><span class="t">4.3 Tecnologías</span><span class="fill"></span><span class="p">6</span></li>
-<li class="n2"><span class="t">4.4 Arquitectura global</span><span class="fill"></span><span class="p">7</span></li>
-<li class="n2"><span class="t">4.5 Casos de uso</span><span class="fill"></span><span class="p">8</span></li>
-<li class="n2"><span class="t">4.6 Componentes del BFF</span><span class="fill"></span><span class="p">9</span></li>
-<li class="n1"><span class="t">5. Componentes desarrollados</span><span class="fill"></span><span class="p">10</span></li>
-<li class="n2"><span class="t">5.1 Migración de procesos batch: xyz_bank_batch</span><span class="fill"></span><span class="p">10</span></li>
-<li class="n2"><span class="t">5.2 BFF y microservicios de dominio: xyz_bank_bff</span><span class="fill"></span><span class="p">12</span></li>
-<li class="n2"><span class="t">5.3 Plataforma Spring Cloud y mensajería: kafka_S8</span><span class="fill"></span><span class="p">13</span></li>
-<li class="n1"><span class="t">6. Integración entre componentes</span><span class="fill"></span><span class="p">15</span></li>
-<li class="n2"><span class="t">6.1 Flujo de una consulta en el canal web</span><span class="fill"></span><span class="p">16</span></li>
-<li class="n2"><span class="t">6.2 Flujo de la ingesta de eventos</span><span class="fill"></span><span class="p">16</span></li>
-<li class="n1"><span class="t">7. Seguridad y resiliencia</span><span class="fill"></span><span class="p">17</span></li>
-<li class="n1"><span class="t">8. Despliegue en la nube</span><span class="fill"></span><span class="p">18</span></li>
-<li class="n2"><span class="t">8.1 Contenerización con Docker</span><span class="fill"></span><span class="p">18</span></li>
-<li class="n2"><span class="t">8.2 Instancia EC2 y Security Group</span><span class="fill"></span><span class="p">18</span></li>
-<li class="n2"><span class="t">8.3 Script de despliegue</span><span class="fill"></span><span class="p">19</span></li>
-<li class="n2"><span class="t">8.4 Mediciones del despliegue</span><span class="fill"></span><span class="p">20</span></li>
-<li class="n2"><span class="t">8.5 Escalabilidad horizontal</span><span class="fill"></span><span class="p">20</span></li>
-<li class="n1"><span class="t">9. Pruebas y resultados</span><span class="fill"></span><span class="p">21</span></li>
-<li class="n2"><span class="t">9.1 Pruebas automatizadas</span><span class="fill"></span><span class="p">21</span></li>
-<li class="n2"><span class="t">9.2 Pruebas funcionales del despliegue</span><span class="fill"></span><span class="p">21</span></li>
-<li class="n2"><span class="t">9.3 Comparación con el sistema legacy</span><span class="fill"></span><span class="p">22</span></li>
-<li class="n1"><span class="t">10. Desafíos y soluciones</span><span class="fill"></span><span class="p">23</span></li>
-<li class="n1"><span class="t">11. Propuestas de mejora y próximos pasos</span><span class="fill"></span><span class="p">23</span></li>
-<li class="n1"><span class="t">12. Conclusiones</span><span class="fill"></span><span class="p">25</span></li>
-<li class="n1"><span class="t">Anexo A. Repositorios y puertos</span><span class="fill"></span><span class="p">25</span></li>
+<li class="n1"><span class="t">3. Procesos clave de la migración</span><span class="fill"></span><span class="p">5</span></li>
+<li class="n1"><span class="t">4. Propuesta de arquitectura</span><span class="fill"></span><span class="p">6</span></li>
+<li class="n2"><span class="t">4.1 Requerimientos clave del negocio</span><span class="fill"></span><span class="p">6</span></li>
+<li class="n2"><span class="t">4.2 Decisiones de arquitectura y alternativas descartadas</span><span class="fill"></span><span class="p">7</span></li>
+<li class="n2"><span class="t">4.3 Tecnologías</span><span class="fill"></span><span class="p">8</span></li>
+<li class="n2"><span class="t">4.4 Arquitectura global</span><span class="fill"></span><span class="p">9</span></li>
+<li class="n2"><span class="t">4.5 Casos de uso</span><span class="fill"></span><span class="p">10</span></li>
+<li class="n2"><span class="t">4.6 Componentes del BFF</span><span class="fill"></span><span class="p">11</span></li>
+<li class="n1"><span class="t">5. Componentes desarrollados</span><span class="fill"></span><span class="p">13</span></li>
+<li class="n2"><span class="t">5.1 Migración de procesos batch: xyz_bank_batch</span><span class="fill"></span><span class="p">13</span></li>
+<li class="n2"><span class="t">5.2 BFF y microservicios de dominio: xyz_bank_bff</span><span class="fill"></span><span class="p">16</span></li>
+<li class="n2"><span class="t">5.3 Plataforma Spring Cloud y mensajería: kafka_S8</span><span class="fill"></span><span class="p">17</span></li>
+<li class="n1"><span class="t">6. Integración entre componentes</span><span class="fill"></span><span class="p">19</span></li>
+<li class="n2"><span class="t">6.1 Flujo de una consulta en el canal web</span><span class="fill"></span><span class="p">21</span></li>
+<li class="n2"><span class="t">6.2 Flujo de la ingesta de eventos</span><span class="fill"></span><span class="p">22</span></li>
+<li class="n1"><span class="t">7. Seguridad y resiliencia</span><span class="fill"></span><span class="p">22</span></li>
+<li class="n1"><span class="t">8. Despliegue en la nube</span><span class="fill"></span><span class="p">24</span></li>
+<li class="n2"><span class="t">8.1 Contenerización con Docker</span><span class="fill"></span><span class="p">24</span></li>
+<li class="n2"><span class="t">8.2 Instancia EC2 y Security Group</span><span class="fill"></span><span class="p">24</span></li>
+<li class="n2"><span class="t">8.3 Script de despliegue</span><span class="fill"></span><span class="p">25</span></li>
+<li class="n2"><span class="t">8.4 Mediciones del despliegue</span><span class="fill"></span><span class="p">26</span></li>
+<li class="n2"><span class="t">8.5 Escalabilidad horizontal</span><span class="fill"></span><span class="p">27</span></li>
+<li class="n1"><span class="t">9. Pruebas y resultados</span><span class="fill"></span><span class="p">28</span></li>
+<li class="n2"><span class="t">9.1 Pruebas automatizadas</span><span class="fill"></span><span class="p">28</span></li>
+<li class="n2"><span class="t">9.2 Pruebas funcionales del despliegue</span><span class="fill"></span><span class="p">28</span></li>
+<li class="n2"><span class="t">9.3 Comparación con el sistema legacy</span><span class="fill"></span><span class="p">29</span></li>
+<li class="n1"><span class="t">10. Desafíos y soluciones</span><span class="fill"></span><span class="p">31</span></li>
+<li class="n1"><span class="t">11. Propuestas de mejora y próximos pasos</span><span class="fill"></span><span class="p">32</span></li>
+<li class="n1"><span class="t">12. Conclusiones</span><span class="fill"></span><span class="p">33</span></li>
+<li class="n1"><span class="t">Anexo A. Repositorios y puertos</span><span class="fill"></span><span class="p">33</span></li>
 </ol>
 </section>
 <h1 id="resumen" class="sin-salto" style="break-before: page;">1. Resumen ejecutivo</h1>
@@ -329,7 +333,7 @@
   </tbody>
 </table>
 
-<h2 id="componentes-bff" style="break-before: page; margin-top: 0;">4.6 Componentes del BFF</h2>
+<h2 id="componentes-bff">4.6 Componentes del BFF</h2>
 <p>El BFF separa la seguridad, los controladores por canal, los servicios que adaptan la respuesta, el agregador que consulta en paralelo y los clientes REST hacia cada microservicio. Cada capa tiene un color distinto en el diagrama.</p>
 <figure class="alta">
   <img src="../diagramas/componentes-bff.png" alt="Componentes del BFF">
@@ -339,7 +343,7 @@
 
 <h2 id="batch">5.1 Migración de procesos batch: xyz_bank_batch</h2>
 <p>El sistema reescribe en Spring Batch 6 los tres procesos del legacy. Un <code>masterJob</code> re-ejecutable limpia las tablas destino y lanza en paralelo tres flujos, uno por archivo de entrada. Cada flujo lee las filas como texto crudo, las valida y normaliza en un procesador y las escribe en PostgreSQL por chunks de 100 registros.</p>
-<figure class="alta">
+<figure class="alta" style="--mh:138mm">
   <img src="../diagramas/batch-masterjob.png" alt="Flujo del masterJob">
   <figcaption>Estructura del <code>masterJob</code>: tres flujos paralelos de lectura, procesamiento y escritura. Los tres procesadores registran sus rechazos y correcciones en <code>data_quality_log</code></figcaption>
 </figure>
@@ -688,7 +692,7 @@
     <tr><td><code>kafka_S8</code></td><td>github.com/CarlosJRF/kafka_S8</td><td>Siete servicios Spring Cloud, <code>config-repo/</code>, <code>docker-compose.yaml</code>, scripts de demostración y evidencias</td></tr>
   </tbody>
 </table>
-<table>
+<table style="break-inside: avoid">
   <caption>Puertos de los componentes</caption>
   <thead><tr><th style="width:22%">Sistema</th><th>Puertos (los publicados en la instancia, en negrita)</th></tr></thead>
   <tbody>
@@ -698,6 +702,13 @@
   </tbody>
 </table>
 <p>Los puertos 8081 y 8082 se repiten entre <code>xyz_bank_bff</code> y <code>kafka_S8</code>, pero ninguno de los dos se publica en el servidor, de modo que no hay conflicto.</p>
+
+<section class="legal">
+  <div class="bloque">
+    <img src="img/logo-portada.png" alt="Duoc UC Online">
+    <p>Reservados todos los derechos Fundación Instituto Profesional Duoc UC. No se permite copiar, reproducir, reeditar, descargar, publicar, emitir, difundir, de forma total o parcial la presente obra, ni su incorporación a un sistema informático, ni su transmisión en cualquier forma o por cualquier medio (electrónico, mecánico, fotocopia, grabación u otros) sin autorización previa y por escrito de Fundación Instituto Profesional Duoc UC La infracción de dichos derechos puede constituir un delito contra la propiedad intelectual.</p>
+  </div>
+</section>
 
 </body>
 </html>
