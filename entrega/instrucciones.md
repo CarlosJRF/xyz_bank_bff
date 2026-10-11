@@ -1,6 +1,6 @@
 # Instrucciones para ejecutar y probar la solución
 
-Guía paso a paso para desplegar los tres sistemas en una instancia EC2 y probarlos en orden: primero el batch, luego el BFF y por último la plataforma `kafka_S8`. Sirve para las pruebas y para grabar el video: cada prueba indica el método, la autenticación y la respuesta esperada.
+Guía paso a paso para desplegar los tres sistemas en una instancia EC2 y probarlos en orden: primero el batch, luego el BFF y por último la plataforma `kafka_S8`. Guia para las pruebas: cada prueba indica el método, la autenticación y la respuesta esperada.
 
 ## 0. Qué se prueba y con qué herramienta
 
@@ -10,7 +10,7 @@ Guía paso a paso para desplegar los tres sistemas en una instancia EC2 y probar
 | 2 | `xyz_bank_bff` | **Postman** (HTTPS :8443) | Respuesta distinta por canal y según el cliente |
 | 3 | `kafka_S8` | **Postman** (HTTP :80) y SSH | OAuth2, ingesta por Kafka, resiliencia y escalado |
 
-Dos aclaraciones para no confundirse al explicarlo:
+Aclaratorias importantes:
 
 - **El batch no se llama desde Postman.** `xyz_bank_batch` es un job de línea de comandos (`masterJob`): se ejecuta con `docker compose run` y su resultado se verifica en PostgreSQL.
 - **Cada sistema lee sus propios datos.** El BFF devuelve los datos de `ms-cuentas`, `ms-transacciones` y `ms-clientes`, que cargan sus CSV en memoria al arrancar. No lee las tablas que deja el batch. Tampoco `kafka_S8`, que usa su propio PostgreSQL (`banking`). Los tres sistemas están desacoplados (ver `readme.md`, secciones 3 y 7).
@@ -680,39 +680,4 @@ En Eureka (comando de K13 o el panel) aparecen **2 instancias** de `DATA-PROCESS
 docker compose up -d --scale data-processor-service=1 --no-recreate --wait
 ```
 
-## 6. Antes de grabar el video
 
-### Volver al estado inicial
-
-| Sistema | Comandos | Resultado |
-|---|---|---|
-| `kafka_S8` | `cd /opt/xyz-bank/kafka_S8 && docker compose down -v && docker compose up -d --wait` | `GET /api/stats` vuelve a ceros (tarda 1 a 2 minutos; no recompila) |
-| `xyz_bank_batch` | `cd /opt/xyz-bank/xyz_bank_batch && docker compose down -v && docker compose up -d --wait` | Base sin tablas; `docker compose run --rm batch` las crea y las puebla |
-| `xyz_bank_bff` | `cd /opt/xyz-bank/xyz_bank_bff && docker compose restart ms-clientes` | Solo hace falta si diste de alta clientes en B9: recarga los 10 clientes iniciales |
-
-### Orden sugerido para la demostración
-
-Los tiempos son una guía para mantenerse entre 5 y 7 minutos.
-
-| Tiempo | Qué mostrar | Pruebas |
-|---|---|---|
-| 0:00 a 0:45 | Resumen ejecutivo: el diagrama de arquitectura global (`diagramas/arquitectura-global.png`) | — |
-| 0:45 a 1:30 | La instancia EC2, los 14 contenedores `healthy` y las pruebas de humo | 1.4 |
-| 1:30 a 2:30 | Batch: ejecución del job y conteos en PostgreSQL | A1 a A3 |
-| 2:30 a 3:45 | BFF: tres canales, cambio según el cliente, 401 y 403 | B1 a B7 |
-| 3:45 a 5:30 | kafka_S8: token, ingesta, estadísticas, scopes, circuit breaker | K1 a K12 |
-| 5:30 a 6:30 | Resultados frente al legacy, desafíos y soluciones, mejoras (`readme.md`, secciones 5 y 7) | — |
-
-La pauta pide cubrir cuatro puntos en el video: resumen ejecutivo, resultados y comparación con el legacy, desafíos con sus soluciones, y propuestas de mejora.
-
-## 7. Solución de problemas
-
-| Síntoma | Causa y solución |
-|---|---|
-| Postman no conecta al BFF | Revisa que el Security Group permita el 8443 desde tu IP actual y que la verificación SSL esté desactivada |
-| `401` en `kafka_S8` con un token que antes funcionaba | El token venció (30 minutos): repite K1 |
-| `K3` no muestra ceros | Ya se ejecutó una ingesta antes: usa el reinicio de `kafka_S8` de la sección 6 |
-| `K5` muestra conteos parciales | El procesador aún consume los mensajes de Kafka: repite la petición a los pocos segundos |
-| `K12` o el script no muestran `source: "cache"` | No hubo una respuesta buena previa: ejecuta K9 con el servicio sano y repite |
-| El script del circuit breaker no encuentra el gateway | Pasa `GATEWAY_URL=http://localhost` (en la instancia el gateway está en el puerto 80, no en el 8080) |
-| `docker compose` no encuentra el archivo | Estás en otra carpeta: entra a la carpeta del sistema bajo `/opt/xyz-bank` |
